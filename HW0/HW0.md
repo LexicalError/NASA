@@ -292,13 +292,75 @@
 ### 5. 為什麼簽不了憑證？？？  
 
 * **P1**  
+    A subnet is a logical division of an IP network, usually represented by partitioning the ip address into a subnet id and a host id.  
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/Subnet](https://en.wikipedia.org/wiki/Subnet)
+* **P2**  
+    Gateways are software or hardware that support multiple protocols in order to connect different networks together, they can operate at all 7 layers of the OSI model.
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/Gateway_(telecommunications)](https://en.wikipedia.org/wiki/Gateway_(telecommunications))
+* **P3**  
+    X -> WAN -> A1  
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/Default_gateway](https://en.wikipedia.org/wiki/Default_gateway)
+* **P4**  
+    If machine A has a route specification that points to X through A1:
+    A1 -> WAN -> X  
+    Otherwise:  
+    A2 -> LAN -> B2 -> WAN -> X  
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/Default_gateway](https://en.wikipedia.org/wiki/Default_gateway)
+* **P5**  
+    Stateful firewalls monitor packets by tracking the state of incoming network connections, while stateless firewalls monitor each package individually.  
+    Stateful firewalls are more likely to block a TCP ACK without a SYN.  
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/Stateful_firewall](https://en.wikipedia.org/wiki/Stateful_firewall)
+    [https://www.checkpoint.com/cyber-hub/network-security/what-is-firewall/what-is-a-stateless-firewall/](https://www.checkpoint.com/cyber-hub/network-security/what-is-firewall/what-is-a-stateless-firewall/)
+* **P6**  
+    It seems that during the TCP handshake in step 2, X sends SYN which arrives at A1, A sends (SYN, ACK), which goes through the default gateway, since B is a stateful firewall, it blocks A's out going (SYN, ACK), as it hasn't seen an ACK beforehand. This means X never receives the (SYN, ACK) no matter how many times it tries, and thus cannot establish a TCP connection.  
+* **P7**  
+    1. System shutdown: 5 ~ 15 minutes depending on services and active connections.
+    2. Certificate Update: 30 ~ 60 minutes, assuming we are talking about domain validation certificates, which are usually automatically validated.
+    3. System restart and testing: 1 ~ 2 hours, to ensure all services are functional.  
+    4. Grace period/overflow time: 1 ~ 2 hours, For when something goes wrong and we need more time to identify, fix or reschedule another system maintenance.  
+    In total 6 hours.  
+
+* **P8**  
+    Remove A's A1 interface, and have it accept all data from its default gateway.  
+    Add a route entry to A's route table that directly connects A1 to X through the WAN.  
+* **P9**  
+    Yes :3
+
+## System Administration
+
+### 6. btw I use arch  
+
+* **P0**  
+
+* **P1**  
 
 * **P2**  
+
 * **P3**  
+
+
+### 7. Flag hunting
+
+* **P1**  
+
+* **P2**  
+
+* **P3**  
+
 * **P4**  
+
 * **P5**  
-* **P6**  
-* **P7**  
-* **P8**  
-* **P9**  
+
+### 8. NASA 國的大危機  
+
+* **P1**  
+
+* **P2**  
+
+* **P3**  
 
