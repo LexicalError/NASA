@@ -1,0 +1,304 @@
+# NASA Homework 0
+
+林靖昀
+
+## Network Administration
+
+### 1. Short Answer
+
+* **P1**
+    From layer 5 to 1:  
+    * **Application layer:**
+    Provides an interface and protocols/services for applications to use.
+    Example:
+    A web browser and a web server communicating with the HTTP protocol.
+    * **Transport layer:**
+    Segments the data through two main protocols, TCP / UDP, provides multiplexing through ports and reliable data transfer(TCP).  
+    Example:
+    HTTP using TCP's service to ensure a connection.
+    * **Network layer:**
+    Packs segments(or UDP datagrams) into IP datagrams, then routes the data to the destination.
+    Example:
+    TCP using IP to route to a destination.
+    * **Data link layer:**
+    Frames the data, and defines protocols on how data is sent from device to device.
+    Example:
+    Using ARP to discover the MAC address associated with the IP address. 
+    * **Physical layer:**
+    In charge of turning digital data into a format that can be sent over different physical medias.
+    Example:
+    Data being translated into radio wave signals to be transferred over wifi.  
+
+    **Reference:**
+    **Computer Networking A Top-Down Approach**
+
+<br>
+
+* **P2**  
+    1.  VLANs are the logical separation of a physical network, allowing us to create virtual LANs. It abstracts out the physical layout of the network and allows us to group and design different virtual networks regardless of the underlying network layout.  
+
+    2.  **Switch:**  
+        Forwards data between the devices connected directly  to it, enabling communication between those devices.  A switch operates at layer 2 in the TCP/IP model. It provides direct link access with MAC addresses.  
+        **Router:**  
+        Forwards data between the networks connected to it, providing routing between different networks. With different protocols, routers route data over an optimal path over the internet.  A router operates at layer 3 in the TCP/IP model. It provides inter-network communication while implementing routing.  
+
+    3.  **Broadcast storm:**  
+        A Broadcast storm is the accumulation of broadcast messages on a networks bandwidth,commonly caused by infinitely looping broadcast messages (from a switching loop.)  
+        Prevention:  
+        * Getting rid of switching loops via link aggregation or other techniques.  
+        * Segmenting the broadcast domain physically or logically (with VLANs).  
+
+        **Switching loop:**  
+        A switching loop happens when there exists more than 1 path between 2 switches, thus forming a loop, allowing data to loop indefinitely.  
+        Prevention:  
+        * Using Link aggregation.  
+        * Using the spanning tree protocol to build loop free logical networks.  
+
+        Broadcast storms and switching loops are similar in that they both stem from infinitely looping data occupying the network, broadcast storms are different from switching loops as they are caused specifically by broadcast messages.
+
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/VLAN](https://en.wikipedia.org/wiki/VLAN)  
+    [https://en.wikipedia.org/wiki/Network_switch](https://en.wikipedia.org/wiki/Network_switch)  
+    [https://en.wikipedia.org/wiki/Router_(computing)](https://en.wikipedia.org/wiki/Router_(computing))
+    [https://en.wikipedia.org/wiki/Broadcast_storm](https://en.wikipedia.org/wiki/Broadcast_storm)
+    [https://en.wikipedia.org/wiki/Switching_loop](https://en.wikipedia.org/wiki/Switching_loop)  
+
+<br>
+
+* **P3**  
+    1. Because there are not enough IPv4 addresses.  
+    2. Considering the fact that IPv6 contains 340,282,366,920,938,463,463,374,607,431,768,211,456 addresses (128 bit address space), giving: “3,911,873,538,269,506,102 addresses per square meter of the surface of the planet Earth”, it is highly unlikely that we would need to change protocols because of insufficient addresses. That being said, this does not mean that there won't be changes to our internet protocol stack, the architecture of the internet might change in the future bringing new protocols.  
+    3. The main difference is the address space size, other changes where also made in IPv6, like replacing TTL with hop limit, and defining a fixed header size. In IPv6, only the sender can perform fragmentation, while in IPv4, nodes along the route can fragment the data if needed.  
+    4. Since a the internet was initially implemented on IPv4, a lot of old hardware and software are not built to support IPv6, transitioning between the two cannot be done instantly and needs to be slowly phased in.  
+
+    **Reference:**  
+    [https://www.ciscopress.com/articles/article.asp?p=2803866&seqNum=3](https://www.ciscopress.com/articles/article.asp?p=2803866&seqNum=3)
+    [https://en.wikipedia.org/wiki/IPv6](https://en.wikipedia.org/wiki/IPv6)
+    [https://en.wikipedia.org/wiki/IPv6_packet](https://en.wikipedia.org/wiki/IPv6_packet)
+    [https://en.wikipedia.org/wiki/IPv4](https://en.wikipedia.org/wiki/IPv4)
+    [https://www.geeksforgeeks.org/differences-between-ipv4-and-ipv6/#difference-between-ipv4-and-ipv6](https://www.geeksforgeeks.org/differences-between-ipv4-and-ipv6/#difference-between-ipv4-and-ipv6)
+
+<br>
+
+* **P4**  
+    * **UDP**  
+    UDP is connectionless protocol, it works by providing "best effort" service: sending data without establishing a connection before hand, allowing you to send data without needing to care if the other end is even available or not.  
+    * **TCP**  
+    TCP works by establishing a connection first, then sending data over, TCP provides reliable data transfer, deals with errors and packet loses, and provides congestion control.  
+
+    TCP and UDP both provide multiplexing through ports.  TCP provide more services as listed above, while UDP provides bare bones best effort service.
+    UDP is used when high latency cannot be tolerated, and reliable data transfer is not important (video streaming, online gaming, etc.)  
+    TCP is used when transmission errors cannot be tolerated, and latency is not that important (SMTP)
+    **Reference:**
+    **Computer Networking A Top-Down Approach**  
+
+<br>
+
+* **P5**  
+    EFK is a software stack consisting of Elasticsearch, Fluentd, and Kibana. Fluentd collects and unifies log data to Elasticsearch, which is a search engine. Kibana is a data visualization frontend dashboard for Elasticsearch.  
+
+* **P6**  
+    The multiplexing at layer 4 is the differentiation of different services on the same host, ports are used to multiplex and de-multiplex in this case.  
+    Generally in networking, multiplexing is resource sharing between multiple hosts, 3 common types of multiplexing are:  
+    1. Time-division multiplexing
+    2. Frequency-division multiplexing
+    3. Statistical multiplexing  
+
+    The wifi in our department building likely uses FDM (or some variant of it), since wifi is transmitted over radio waves.  
+    **Reference:**
+    **Computer Networking A Top-Down Approach**  
+
+<div style="page-break-after: always;"></div>
+
+### 2. Command Line Utilities
+
+* **P1**  
+    1.  traceroute results:  
+        ![](img/NA2-1-1.png)
+    2.  ping:  
+        ![](img/NA2-1-2-1.png)
+        nslookup:  
+        ![](img/NA2-1-2-2.png)
+    3.  From the reserved ip address ranges for private networks:  
+        10.200.200.200 belongs to a private network.  
+        140.112.4.126 and 140.112.5.178 belongs to the public network.  
+    4.  traceroute works by sending probes with incrementing TTL, at each TTL, by default traceroute will send 3 probes, the 3 time values are the round trip time of each probe, if we change the amount of probes we send per TTL, the amount of time values we get will also change.  
+        Later results might not always be larger, for example, if a later node has a better path back to us, the round trip time might add up to be smaller.  
+    5.  Sequence diagram:  
+
+        ```mermaid
+        sequenceDiagram
+        participant traceroute
+        participant 10.200.200.200
+        participant 140.112.4.126
+        participant 140.112.5.178
+        traceroute->>10.200.200.200: Send udp datagram (TTL=1)
+        10.200.200.200-->>traceroute: ICMP TIME_EXCEEDED
+        traceroute->>10.200.200.200: Send udp datagram (TTL=2)
+        10.200.200.200->>140.112.4.126: Forward udp datagram (TTL=1)
+        140.112.4.126-->>traceroute: ICMP TIME_EXCEEDED
+        traceroute->>10.200.200.200: Send udp datagram (TTL=3)
+        10.200.200.200->>140.112.4.126: Forward udp datagram (TTL=2)
+        140.112.4.126->>140.112.5.178: Forward udp datagram (TTL=1)
+        140.112.5.178-->>traceroute: icmp unreach port
+        ```
+    **Reference:**  
+    traceroute man page
+
+
+* **P2**  
+    1.  ping sends ICMP ECHO_REQUESTs.  
+        ping results:  
+        ![alt text](img/NA2-2-1-2.png)  
+    2.  nmap results:  
+        ![](img/NA2-2-2-1.png)
+        We see that ping is unable to get a response while nmap with the `-sn` option can, from nmaps man page:  
+        > The default host discovery done with -sn consists of an ICMP echo request, TCP SYN to port 443, TCP ACK to port 80, and an ICMP timestamp request by default. When executed by an unprivileged user, only SYN packets are sent (using a connect call) to ports 80 and 443 on the target.  
+
+        Using the `-vvv` option we see:  
+        ![](img/NA2-2-2-1_alt.png)
+        We received a SYN-ACK, meaning the TCP SYN sent to port 80 / 443 gave us a response.  
+
+    3.  Scan reults:  
+        ![](img/NA2-2-3-1.png)  
+        Service: http
+        Version: nginx 1.26.2
+        http is a request-response protocol used to transmit data over the web.  
+        Command:  `nmap -p80 -sV 140.112.91.2`  
+    
+    4.  POST response:  
+        ![](img/NA2-2-4-1.png)
+        nmap scan results:  
+        ![](img/NA2-2-4-2.png)
+        netcat response:  
+        ![](img/NA2-2-4-3.png)
+    
+    **Reference:**
+    ping, nmap, and curl man pages.  
+
+<br>
+
+* **P3**  
+    1.  nslookup results:  
+        ![alt text](img/NA2-3-1.png)
+        IP: 140.112.30.131  
+    2.  nslookup results:  
+        ![](img/NA2-3-2.png)
+        Domain name: Starry.csie.ntu.edu.tw  
+    3.  nslookup results:  
+        ![](img/NA2-3-3.png)  
+        TXT: "Your guitar is in the box"
+    4.  dig results:  
+        ![](img/NA2-3-4.png)
+        CNAME: Gu1tArHer0.csie.ntu.edu.tw  
+    
+    **Reference:**
+    nslookup & dig man pages
+    [https://en.wikipedia.org/wiki/List_of_DNS_record_types](https://en.wikipedia.org/wiki/List_of_DNS_record_types)
+
+<br>
+
+### 3. Basic Wireshark
+* **P1**   
+    1.  Port 3000
+    2.  We see multiple ACKS from port 3000 after SYN was sent to it, we also see that port 3000 receives HTTP requests, and sends back HTTP responses.  
+    3.  I/O throughput graph:  
+        ![](img/NA3-1-3.png)
+    4.  Highest transmission speed: 1.268MB/s
+        Time: 2.837 (second)
+    5.  29, search with filter with 'http.request.method == "GET"'.
+    6.  There is a POST request to "/dashboard/invoices/create"  
+        Data in customer ID field:33393538646339652d373132662d343337372d383565392d666563346236613634343261
+
+    **Reference:**  
+    [https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html](https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html)
+
+* **P2**  
+    1.  1. Go to Edit>Preferences
+        2. In the protocols drop down menu on the left, select TLS.  
+        3. Edit RSA keys list
+        4. Set IP to 127.0.0.1, port 443, and select private key file.  
+    2.  Packet number 32.  
+        Image:  
+        ![](img/NA3-2-2.png)
+    **Reference:**  
+    [https://my.f5.com/manage/s/article/K19310681](https://my.f5.com/manage/s/article/K19310681)
+
+### 4. Cryptography  
+
+* **P1**  
+    1.  **Flag:**  NASA_HW0{1_10V3_r54}  
+    2.  Process:  
+        1.  Generate key
+        2.  Receive encrypted
+        3.  Decrypt with CRT:
+            $d_p = d \mod (p - 1)$
+            $d_q = d \mod (q - 1)$
+            $q_{inv} = q^{-1} \mod p$
+            $m_1 = c^{d_p} \mod p$
+            $m_2 = c^{d_q} \mod q$
+            $h = (q_{inv}(m_1 - m_2)) \mod p$
+            $m = m_2 + h \times q$  
+        4.  Convert decrypted int into bytes then into text.  
+
+    Python code:  
+    ```python
+    from pwn import *
+    from Crypto.PublicKey import RSA
+
+    key = RSA.generate(4096)
+
+    target = remote("140.112.91.1", 48763)
+
+    print(target.recvuntil("n: "))
+
+    target.sendline(str(key.n))
+
+    print(target.recvuntil("e: "))
+
+    target.sendline(str(key.e))
+
+    print(target.recvline())
+    print(target.recvuntil(": "))
+    secret = int(target.recvall()[:-1])
+    secret = int(secret)
+
+    print(secret)
+
+    dp = key.d % (key.p - 1)
+    dq = key.d % (key.q - 1)
+    qinv = pow(key.q, -1, key.p)
+
+    print("dp: ", dp)
+    print("dq: ", dq)
+    print("qinv: ", qinv)
+
+    m1 = pow(secret, dp, key.p)
+    m2 = pow(secret, dq, key.q)
+
+    h = (qinv*(m1 - m2)) % key.p
+    m = m2 + h * key.q
+
+    m = m.to_bytes(m.bit_length() // 8 + 1).decode()
+
+    print(m)
+    ```  
+
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/RSA_(cryptosystem)](https://en.wikipedia.org/wiki/RSA_(cryptosystem))
+    [https://guyinatuxedo.github.io/02-intro_tooling/pwntools/index.html](https://guyinatuxedo.github.io/02-intro_tooling/pwntools/index.html)
+    [https://pycryptodome.readthedocs.io/en/latest/src/public_key/rsa.html](https://pycryptodome.readthedocs.io/en/latest/src/public_key/rsa.html)
+
+### 5. 為什麼簽不了憑證？？？  
+
+* **P1**  
+
+* **P2**  
+* **P3**  
+* **P4**  
+* **P5**  
+* **P6**  
+* **P7**  
+* **P8**  
+* **P9**  
+
