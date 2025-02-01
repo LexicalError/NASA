@@ -493,8 +493,53 @@
 ### 8. NASA 國的大危機  
 
 * **P1**  
+    `Dockerfile`:
+    ![](img/SA8-1.png)
+    `FROM python:3.9-slim`:  Specify the base image that we are building.  
+    `RUN apt-get update && apt-get install -y ... && rm -rf /var/lib/apt/lists/*`: Update package manager and install packages, the `rm` is to remove files created by `apt-get update`, this is done to reduce the layer size.  
+    `RUN mdkir -p /usr/libexec/run`: create directory.  
+    `COPY usr/libexec/run/dist/transfer /usr/libexec/run/transfer`: Copies file into the filesystem.
+    `COPY usr/libexec/run/run.sh /usr/libexec/run/run.sh`: Copies file into the filesystem.  
+    `RUN chmod +x /usr/libexec/run/transfer`: Change the newly copied file into an executable.  
+    `RUN chmod +x /usr/libexec/run/run.sh`: Change the newly copied file into an executable.  
+    `CMD ["/usr/libexec/run/run.sh"]`: Sets the script `run.sh` to run when launching the build image.  
+
+    **Reference:**  
+    [https://docs.docker.com/reference/dockerfile/](https://docs.docker.com/reference/dockerfile/)
+    [https://docs.docker.com/get-started/docker-concepts/building-images/understanding-image-layers/](https://docs.docker.com/get-started/docker-concepts/building-images/understanding-image-layers/)
+    [https://askubuntu.com/questions/179955/var-lib-apt-lists-is-huge](https://askubuntu.com/questions/179955/var-lib-apt-lists-is-huge)
+    [https://linux.die.net/man/8/apt-get](https://linux.die.net/man/8/apt-get)
+    [https://opensource.com/article/20/5/optimize-container-builds](https://opensource.com/article/20/5/optimize-container-builds)  
 
 * **P2**  
+    `docker images`:  
+    ![](img/SA8-2-1.png)  
+    `docker run <ID>`:  
+    ![](img/SA8-2-2.png)  
+    Check `run.sh`:    
+    ![](img/SA8-2-3.png)
+    Set environmental variable with `-e VAR=value`:  
+    ![](img/SA8-2-4.png)  
+
+    **Reference:**  
+    docker man page & docker --help
+    [https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)  
 
 * **P3**  
+    Rerun image in background with `-d` flag:  
+    ![](img/SA8-3-1.png)  
+    Get container id:  
+    ![](img/SA8-3-2.png)
+    Enter container with `docker exec -it <ID> /bin/bash`:  
+    ![](img/SA8-3-3.png)
+    Use `tcpdump -i any -nn -A` to sniff packets and show packet contents:  
+    ![](img/SA8-3-4.png)
+    Flag:  
+    flag[I'll send our killer on 3948/02/22]  
+
+    **Reference:**  
+    docker man page & docker --help  
+    [https://docs.docker.com/reference/cli/docker/container/exec/](https://docs.docker.com/reference/cli/docker/container/exec/)  
+    tcpdump man page  
+    [https://opensource.com/article/18/10/introduction-tcpdump](https://opensource.com/article/18/10/introduction-tcpdump)
 
