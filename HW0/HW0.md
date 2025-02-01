@@ -96,6 +96,10 @@
 
 * **P5**  
     EFK is a software stack consisting of Elasticsearch, Fluentd, and Kibana. Fluentd collects and unifies log data to Elasticsearch, which is a search engine. Kibana is a data visualization frontend dashboard for Elasticsearch.  
+    EFK allows system admins to aggregate and process logging data of many distributed systems while also being scalable. This is suitable for our department, since we have many services running on multiple nodes, each having their own logs and data.  The main disadvantages of EFK are the overhead it brings, and the large amount of storage that is required to store the logs.  
+
+    **Reference:**
+    [https://platform9.com/blog/logging-monitoring-of-kubernetes-applications-requirements-recommended-toolset/](https://platform9.com/blog/logging-monitoring-of-kubernetes-applications-requirements-recommended-toolset/)  
 
 * **P6**  
     The multiplexing at layer 4 is the differentiation of different services on the same host, ports are used to multiplex and de-multiplex in this case.  
@@ -336,13 +340,91 @@
 ### 6. btw I use arch  
 
 * **P0**  
+    My installation of Arch was done in a proxmox VM, pre-installation steps:  
+    1.  Set boot mode to OVMF (UEFI) in VM creation configuration.  
+    2.  Enter firmware settings upon first boot.  
+    3.  Disable secure boot.
+    Arch installation steps:  
+    1.  Set the console keyboard layout and font  
+        1. Use default keymap layout (US).  
+        2. `setfont ter-132b` to increase font size.  
+    2.  Verify the boot mode: `cat /sys/firmware/efi/fw_platform_size`.  
+    3.  Verify internet connection: `ip link`.  
+    4.  Update system clock.  
+        1.  `timedatectl` shows that timezone is set to UTC +0000
+        2.  Set time zone:  `timedatectl set-timezone Asia/Taipei`  
+    5.  Partion disk.
+        1.  `fdisk /dev/sda`.  
+        2.  Create partition table `g`.  
+        3.  Create partitions: `n`, default, default, `+Size`.  
+        4.  Change partition types: `t`, type.  
+        5.  Check changes: `p`.  
+            ![](img/SA6-0-5.png)  
+        6.  Write changes: `w`.  
+    6.  Format partitions:  
+        Root partition: `mkfs.ext4 /dev/sda1`.
+        Home partition: `mkfs.ext4 /dev/sda2`.
+        ESP: `mkfs.fat -F 32 /dev/sda3`.
+        Swap partition: `mkswap /dev/sda4`.
+    7.  Mount partitions:
+        Root partition: `mount /dev/sda1 /mnt`.
+        Home partition: `mount --mkdir /dev/sda2 /mnt/home`.
+        ESP: `mount --mkdir /dev/sda3 /mnt/boot`.
+        Swap partition: `swapon /dev/sda4`.  
+    8. Install essential packages:  `pacstrap -K /mnt base linux linux-firmware networkmanager vim man-db man-pages texinfo`.  
+    9.  Generate Fstab: `genfstab -U /mnt >> /mnt/etc/fstab`.  
+    10. Chroot: `arch-chroot /mnt`.  
+    11. Time:
+        1. Set timezone: `ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime`.  
+        2. generate `/etc/adjtime`: `hwclock --systohc`.  
+    12. Localization:  
+        1. Uncomment `en_US.UTF-8 UTF-8` in `/etc/locale.gen` and run `locale-gen`.  
+        2. Create `locale.conf` with `LANG=en_US.UTF-8` inside.
+        3. Use default us keymap.  
+    13. Create and change hostname file: `/etc/hostname`.  
+    14. Set root password: `passwd`.  
+    15. Install GRUB:  
+        1. Install packages: `pacman -S grub efibootmgr`  
+        2. Grub-install: `grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB`  
+        3. Generate main configuration file: `grub-mkconfig -o /boot/grub/grub.cfg`  
+    16. Reboot:
+        1. `exit` chroot.  
+        2. Unmount: `umount -R /mnt`
+        3. `reboot`  
+    17. Network setup:  
+        Start `NetworkManager`: `systemctl enable NetworkManager`, `systemctl start NetworkManager`.  
+        Add dns server: `resolvectl dns <interface> <dns-server>`.  
+        Start `systemd-resolved`: `systemctl enable systemd-resolved`, `systemctl start systemd-resolved`.  
+    18. Change font:
+        1. Install `terminus-font`: `pacman -S terminus-font`.  
+        2. Edit `/etc/vconsole.conf`: Add `FONT=ter-132b`
+        3. Reload: `systemctl restart systemd-vconsole-setup`.  
+    19. Add user: `useradd -m nasa`, and set password: `passwd nasa`  
+
+    **Reference:**  
+    [https://wiki.archlinux.org/title/Installation_guide](https://wiki.archlinux.org/title/Installation_guide)
+    [https://wiki.archlinux.org/title/System_time](https://wiki.archlinux.org/title/System_time)
+    [https://wiki.archlinux.org/title/Fdisk](https://wiki.archlinux.org/title/Fdisk)
+    [https://man.archlinux.org/man/vconsole.conf.5.en](https://man.archlinux.org/man/vconsole.conf.5.en)
+    [https://wiki.archlinux.org/title/Linux_console#Fonts](https://wiki.archlinux.org/title/Linux_console#Fonts)
+    [https://wiki.archlinux.org/title/Users_and_groups#Example_adding_a_user](https://wiki.archlinux.org/title/Users_and_groups#Example_adding_a_user)  
 
 * **P1**  
+    Hostname can be changed via: `hostnamectl set-hostname <hostname>`
+    ![](img/SA6-1.png)  
 
 * **P2**  
+    ![](img/SA6-2-1.png)
+    ![](img/SA6-2-2.png)
+    **Reference:**  
+    lsblk man page.  
 
 * **P3**  
+    ![](img/SA6-3-1.png)
+    ![](img/SA6-3-2.png)
 
+    **Reference:**  
+    uname man page.  
 
 ### 7. Flag hunting
 
