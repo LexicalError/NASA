@@ -344,7 +344,7 @@
     1.  Set boot mode to OVMF (UEFI) in VM creation configuration.  
     2.  Enter firmware settings upon first boot.  
     3.  Disable secure boot.  
-    
+
     Arch installation steps:  
     1.  Set the console keyboard layout and font  
         1. Use default keymap layout (US).  
@@ -430,14 +430,65 @@
 ### 7. Flag hunting
 
 * **P1**  
+    1.  With `echo $HISTFILE`:  
+        ![](img/SA7-1-1.png)  
+        Path: `/home/nasa/kickstart.nvim/.git/logs/refs/remotes/origin/HEAD`  
+    2.  With `export HISTSIZE=<number>`  
+    3.  With `export HISTFILESIZE=<number>`  
+    4.  Default history file:  
+        ![](img/SA7-1-4-1.png)  
+        In line 104 of new history file (using `less` and go to line x):
+        ![](img/SA7-1-4-2.png)  
+        Flag:  NASA{y0UF1nd+heCoRr3tFL4G}  
+
+    **Reference:**  
+    [https://datawookie.dev/blog/2023/04/configuring-bash-history/](https://datawookie.dev/blog/2023/04/configuring-bash-history/)  
 
 * **P2**  
+    From `./treasure`:  
+    ![](img/SA7-2-1.png)  
+    In `treasure-chest/`, with `sort -Sl`:  
+    ![](img/SA7-2-2.png)
+    In line 418 in `treasure-chest/flag-962` (using `less` and go to line x):  
+    ![](img/SA7-2-3.png)
+    Flag: NASA{EZ_TrEa$Ur3_HunT!}  
+
+    **Reference:**  
+    sort man page  
 
 * **P3**  
+    With `./boss > tmp & pkill -P $!`:  
+    ![](img/SA7-3.png)  
+    Flag: NASA{m0dERn_Pr0B1em$_reQU1r3_m0dERn_SOluT10N5}  
+
+    **Reference:**
+    pkill man page
+    [https://unix.stackexchange.com/questions/30370/how-to-get-the-pid-of-the-last-executed-command-in-shell-script](https://unix.stackexchange.com/questions/30370/how-to-get-the-pid-of-the-last-executed-command-in-shell-script)  
 
 * **P4**  
+    We can use two `grep`s to get the passcode:  
+    ![](img/SA7-4-1.png)
+    ![](img/SA7-4-2.png)
+    Flag: NASA2025{n4ndeharuh1ka93yatt4n0}  
 
 * **P5**  
+    Find and check `tmux` config file:  
+    ![](img/SA7-5-1.png)
+    ![](img/SA7-5-2.png)
+    We see that the prefix has been set to Ctrl-a.  
+    After entering `tmux`, we can make the layout with the following series of commands:  
+    1.  `Ctrl-a "` (Split horizontally)
+    2.  `Ctrl-a %` (Split vertically)  
+    3.  `Ctrl-a "` (Split horizontally)
+    4.  `Ctrl-a %` (Split vertically) 
+    5.  `Ctrl-a "` (Split horizontally)
+    6.  `Ctrl-a %` (Split vertically)  
+
+    Result:  
+    ![](img/SA7-5-3.png)
+
+    **Reference:**  
+    [https://wiki.archlinux.org/title/Tmux](https://wiki.archlinux.org/title/Tmux)  
 
 ### 8. NASA 國的大危機  
 
