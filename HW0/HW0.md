@@ -343,7 +343,8 @@
     My installation of Arch was done in a proxmox VM, pre-installation steps:  
     1.  Set boot mode to OVMF (UEFI) in VM creation configuration.  
     2.  Enter firmware settings upon first boot.  
-    3.  Disable secure boot.
+    3.  Disable secure boot.  
+    
     Arch installation steps:  
     1.  Set the console keyboard layout and font  
         1. Use default keymap layout (US).  
