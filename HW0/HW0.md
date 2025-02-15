@@ -32,7 +32,7 @@
     **Reference:**
     **Computer Networking A Top-Down Approach**
 
-<br>
+<div style="page-break-after: always;"></div>
 
 * **P2**  
     1.  VLANs are the logical separation of a physical network, allowing us to create virtual LANs. It abstracts out the physical layout of the network and allows us to group and design different virtual networks regardless of the underlying network layout.  
@@ -64,6 +64,7 @@
     [https://en.wikipedia.org/wiki/Switching_loop](https://en.wikipedia.org/wiki/Switching_loop)  
 
 <br>
+<!-- <div style="page-break-after: always;"></div> -->
 
 * **P3**  
     1. Because there are not enough IPv4 addresses.  
@@ -101,6 +102,9 @@
     **Reference:**
     [https://platform9.com/blog/logging-monitoring-of-kubernetes-applications-requirements-recommended-toolset/](https://platform9.com/blog/logging-monitoring-of-kubernetes-applications-requirements-recommended-toolset/)  
 
+<br>
+<!-- <div style="page-break-after: always;"></div> -->
+
 * **P6**  
     The multiplexing at layer 4 is the differentiation of different services on the same host, ports are used to multiplex and de-multiplex in this case.  
     Generally in networking, multiplexing is resource sharing between multiple hosts, 3 common types of multiplexing are:  
@@ -117,19 +121,17 @@
 ### 2. Command Line Utilities
 
 * **P1**  
-    1.  traceroute results:  
-        ![](img/NA2-1-1.png)
-    2.  ping:  
-        ![](img/NA2-1-2-1.png)
-        nslookup:  
-        ![](img/NA2-1-2-2.png)
+    1.  traceroutev results:  
+        ![](img/NA2-1-1.png){height=75}  
+    2.  ping results:  
+        ![](img/NA2-1-2-1.png){height=120} nslookup results:  
+        ![](img/NA2-1-2-2.png){height=120}  
     3.  From the reserved ip address ranges for private networks:  
         10.200.200.200 belongs to a private network.  
         140.112.4.126 and 140.112.5.178 belongs to the public network.  
     4.  traceroute works by sending probes with incrementing TTL, at each TTL, by default traceroute will send 3 probes, the 3 time values are the round trip time of each probe, if we change the amount of probes we send per TTL, the amount of time values we get will also change.  
         Later results might not always be larger, for example, if a later node has a better path back to us, the round trip time might add up to be smaller.  
     5.  Sequence diagram:  
-
         ```mermaid
         sequenceDiagram
         participant traceroute
@@ -149,58 +151,58 @@
     **Reference:**  
     traceroute man page
 
+<div style="page-break-after: always;"></div>
 
 * **P2**  
     1.  ping sends ICMP ECHO_REQUESTs.  
         ping results:  
-        ![alt text](img/NA2-2-1-2.png)  
+        ![](img/NA2-2-1-2.png){height=75}  
     2.  nmap results:  
-        ![](img/NA2-2-2-1.png)
+        ![](img/NA2-2-2-1.png){height=75}
         We see that ping is unable to get a response while nmap with the `-sn` option can, from nmaps man page:  
         > The default host discovery done with -sn consists of an ICMP echo request, TCP SYN to port 443, TCP ACK to port 80, and an ICMP timestamp request by default. When executed by an unprivileged user, only SYN packets are sent (using a connect call) to ports 80 and 443 on the target.  
 
         Using the `-vvv` option we see:  
-        ![](img/NA2-2-2-1_alt.png)
+        ![](img/NA2-2-2-1_alt.png){height=180}
         We received a SYN-ACK, meaning the TCP SYN sent to port 80 / 443 gave us a response.  
 
     3.  Scan reults:  
-        ![](img/NA2-2-3-1.png)  
+        ![](img/NA2-2-3-1.png){height=165}  
         Service: http
         Version: nginx 1.26.2
         http is a request-response protocol used to transmit data over the web.  
         Command:  `nmap -p80 -sV 140.112.91.2`  
     
     4.  POST response:  
-        ![](img/NA2-2-4-1.png)
-        nmap scan results:  
-        ![](img/NA2-2-4-2.png)
-        netcat response:  
-        ![](img/NA2-2-4-3.png)
+        ![](img/NA2-2-4-1.png){height=30} nmap scan results:  
+        ![](img/NA2-2-4-2.png){height=120} netcat response:  
+        ![](img/NA2-2-4-3.png){height=30}
     
     **Reference:**
     ping, nmap, and curl man pages.  
 
-<br>
+<div style="page-break-after: always;"></div>
+
 
 * **P3**  
     1.  nslookup results:  
-        ![alt text](img/NA2-3-1.png)
+        ![alt text](img/NA2-3-1.png){height=105}
         IP: 140.112.30.131  
     2.  nslookup results:  
-        ![](img/NA2-3-2.png)
+        ![](img/NA2-3-2.png){height=75}
         Domain name: Starry.csie.ntu.edu.tw  
     3.  nslookup results:  
-        ![](img/NA2-3-3.png)  
+        ![](img/NA2-3-3.png){height=195}  
         TXT: "Your guitar is in the box"
     4.  dig results:  
-        ![](img/NA2-3-4.png)
+        ![](img/NA2-3-4.png){height=375}
         CNAME: Gu1tArHer0.csie.ntu.edu.tw  
     
     **Reference:**
     nslookup & dig man pages
     [https://en.wikipedia.org/wiki/List_of_DNS_record_types](https://en.wikipedia.org/wiki/List_of_DNS_record_types)
 
-<br>
+<div style="page-break-after: always;"></div>
 
 ### 3. Basic Wireshark
 * **P1**   
@@ -217,16 +219,24 @@
     **Reference:**  
     [https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html](https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html)
 
+<br>
+
 * **P2**  
-    1.  1. Go to Edit>Preferences
+    1.  1. Go to Edit>Preferences.
         2. In the protocols drop down menu on the left, select TLS.  
-        3. Edit RSA keys list
+        3. Edit RSA keys list.
         4. Set IP to 127.0.0.1, port 443, and select private key file.  
     2.  Packet number 32.  
+        1. Go to File>Export Objects>HTTP.
+        2. Save image.
         Image:  
-        ![](img/NA3-2-2.png)
+        ![](img/NA3-2-2.png)  
+
     **Reference:**  
     [https://my.f5.com/manage/s/article/K19310681](https://my.f5.com/manage/s/article/K19310681)
+    [https://osqa-ask.wireshark.org/questions/35123/fastest-way-to-display-a-png-file/](https://osqa-ask.wireshark.org/questions/35123/fastest-way-to-display-a-png-file/)
+
+<div style="page-break-after: always;"></div>
 
 ### 4. Cryptography  
 
@@ -251,15 +261,12 @@
     from Crypto.PublicKey import RSA
 
     key = RSA.generate(4096)
-
     target = remote("140.112.91.1", 48763)
 
     print(target.recvuntil("n: "))
-
     target.sendline(str(key.n))
 
     print(target.recvuntil("e: "))
-
     target.sendline(str(key.e))
 
     print(target.recvline())
@@ -267,16 +274,9 @@
     secret = int(target.recvall()[:-1])
     secret = int(secret)
 
-    print(secret)
-
     dp = key.d % (key.p - 1)
     dq = key.d % (key.q - 1)
     qinv = pow(key.q, -1, key.p)
-
-    print("dp: ", dp)
-    print("dq: ", dq)
-    print("qinv: ", qinv)
-
     m1 = pow(secret, dp, key.p)
     m2 = pow(secret, dq, key.q)
 
@@ -284,7 +284,6 @@
     m = m2 + h * key.q
 
     m = m.to_bytes(m.bit_length() // 8 + 1).decode()
-
     print(m)
     ```  
 
@@ -292,6 +291,8 @@
     [https://en.wikipedia.org/wiki/RSA_(cryptosystem)](https://en.wikipedia.org/wiki/RSA_(cryptosystem))
     [https://guyinatuxedo.github.io/02-intro_tooling/pwntools/index.html](https://guyinatuxedo.github.io/02-intro_tooling/pwntools/index.html)
     [https://pycryptodome.readthedocs.io/en/latest/src/public_key/rsa.html](https://pycryptodome.readthedocs.io/en/latest/src/public_key/rsa.html)
+
+<div style="page-break-after: always;"></div>
 
 ### 5. 為什麼簽不了憑證？？？  
 
@@ -335,6 +336,8 @@
 * **P9**  
     Yes :3
 
+<div style="page-break-after: always;"></div>
+
 ## System Administration
 
 ### 6. btw I use arch  
@@ -360,7 +363,7 @@
         3.  Create partitions: `n`, default, default, `+Size`.  
         4.  Change partition types: `t`, type.  
         5.  Check changes: `p`.  
-            ![](img/SA6-0-5.png)  
+            ![](img/SA6-0-5.png){height=240}  
         6.  Write changes: `w`.  
     6.  Format partitions:  
         Root partition: `mkfs.ext4 /dev/sda1`.
@@ -375,6 +378,9 @@
     8. Install essential packages:  `pacstrap -K /mnt base linux linux-firmware networkmanager vim man-db man-pages texinfo`.  
     9.  Generate Fstab: `genfstab -U /mnt >> /mnt/etc/fstab`.  
     10. Chroot: `arch-chroot /mnt`.  
+
+    <div style="page-break-after: always;"></div>
+
     11. Time:
         1. Set timezone: `ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime`.  
         2. generate `/etc/adjtime`: `hwclock --systohc`.  
@@ -410,71 +416,87 @@
     [https://wiki.archlinux.org/title/Linux_console#Fonts](https://wiki.archlinux.org/title/Linux_console#Fonts)
     [https://wiki.archlinux.org/title/Users_and_groups#Example_adding_a_user](https://wiki.archlinux.org/title/Users_and_groups#Example_adding_a_user)  
 
+<div style="page-break-after: always;"></div>
+
 * **P1**  
     Hostname can be changed via: `hostnamectl set-hostname <hostname>`
-    ![](img/SA6-1.png)  
+    ![](img/SA6-1.png){height=30}  
+
+<br>
 
 * **P2**  
-    ![](img/SA6-2-1.png)
-    ![](img/SA6-2-2.png)
+    ![](img/SA6-2-1.png){height=120}
+    ![](img/SA6-2-2.png){height=120}
     **Reference:**  
     lsblk man page.  
 
+<br>
+
 * **P3**  
-    ![](img/SA6-3-1.png)
-    ![](img/SA6-3-2.png)
+    ![](img/SA6-3-1.png){height=180}
+    ![](img/SA6-3-2.png){height=30}
 
     **Reference:**  
     uname man page.  
+
+<div style="page-break-after: always;"></div>
 
 ### 7. Flag hunting
 
 * **P1**  
     1.  With `echo $HISTFILE`:  
-        ![](img/SA7-1-1.png)  
+        ![](img/SA7-1-1.png){height=30}  
         Path: `/home/nasa/kickstart.nvim/.git/logs/refs/remotes/origin/HEAD`  
     2.  With `export HISTSIZE=<number>`  
     3.  With `export HISTFILESIZE=<number>`  
     4.  Default history file:  
-        ![](img/SA7-1-4-1.png)  
+        ![](img/SA7-1-4-1.png){height=45}  
         In line 104 of new history file (using `less` and go to line x):
-        ![](img/SA7-1-4-2.png)  
-        Flag:  NASA{y0UF1nd+heCoRr3tFL4G}  
+        ![](img/SA7-1-4-2.png){height=15}  
+        **Flag:**  NASA{y0UF1nd+heCoRr3tFL4G}  
 
     **Reference:**  
     [https://datawookie.dev/blog/2023/04/configuring-bash-history/](https://datawookie.dev/blog/2023/04/configuring-bash-history/)  
 
+<br>
+
 * **P2**  
     From `./treasure`:  
-    ![](img/SA7-2-1.png)  
+    ![](img/SA7-2-1.png){height=135}  
     In `treasure-chest/`, with `sort -Sl`:  
-    ![](img/SA7-2-2.png)
+    ![](img/SA7-2-2.png){height=105}  
     In line 418 in `treasure-chest/flag-962` (using `less` and go to line x):  
-    ![](img/SA7-2-3.png)
-    Flag: NASA{EZ_TrEa$Ur3_HunT!}  
+    ![](img/SA7-2-3.png){height=105}  
+    **Flag:** NASA{EZ_TrEa$Ur3_HunT!}  
 
     **Reference:**  
     sort man page  
 
+<div style="page-break-after: always;"></div>
+
 * **P3**  
     With `./boss > tmp & pkill -P $!`:  
-    ![](img/SA7-3.png)  
-    Flag: NASA{m0dERn_Pr0B1em$_reQU1r3_m0dERn_SOluT10N5}  
+    ![](img/SA7-3.png){height=105}  
+    **Flag:** NASA{m0dERn_Pr0B1em$_reQU1r3_m0dERn_SOluT10N5}  
 
     **Reference:**
     pkill man page
     [https://unix.stackexchange.com/questions/30370/how-to-get-the-pid-of-the-last-executed-command-in-shell-script](https://unix.stackexchange.com/questions/30370/how-to-get-the-pid-of-the-last-executed-command-in-shell-script)  
 
+<br>
+
 * **P4**  
     We can use two `grep`s to get the passcode:  
-    ![](img/SA7-4-1.png)
-    ![](img/SA7-4-2.png)
-    Flag: NASA2025{n4ndeharuh1ka93yatt4n0}  
+    ![](img/SA7-4-1.png){height=30}  
+    ![](img/SA7-4-2.png){height=30}  
+    **Flag:** NASA2025{n4ndeharuh1ka93yatt4n0}  
+
+<br>
 
 * **P5**  
     Find and check `tmux` config file:  
-    ![](img/SA7-5-1.png)
-    ![](img/SA7-5-2.png)
+    ![](img/SA7-5-1.png){height=30}  
+    ![](img/SA7-5-2.png){height=60}  
     We see that the prefix has been set to Ctrl-a.  
     After entering `tmux`, we can make the layout with the following series of commands:  
     1.  `Ctrl-a "` (Split horizontally)
@@ -485,16 +507,18 @@
     6.  `Ctrl-a %` (Split vertically)  
 
     Result:  
-    ![](img/SA7-5-3.png)
+    ![](img/SA7-5-3.png){height=240}  
 
     **Reference:**  
-    [https://wiki.archlinux.org/title/Tmux](https://wiki.archlinux.org/title/Tmux)  
+    [https://wiki.archlinux.org/title/Tmux](https://wiki.archlinux.org/title/Tmux) 
+
+<div style="page-break-after: always;"></div>
 
 ### 8. NASA 國的大危機  
 
 * **P1**  
     `Dockerfile`:
-    ![](img/SA8-1.png)
+    ![](img/SA8-1.png){height=420}
     `FROM python:3.9-slim`:  Specify the base image that we are building.  
     `RUN apt-get update && apt-get install -y ... && rm -rf /var/lib/apt/lists/*`: Update package manager and install packages, the `rm` is to remove files created by `apt-get update`, this is done to reduce the layer size.  
     `RUN mdkir -p /usr/libexec/run`: create directory.  
@@ -511,30 +535,27 @@
     [https://linux.die.net/man/8/apt-get](https://linux.die.net/man/8/apt-get)
     [https://opensource.com/article/20/5/optimize-container-builds](https://opensource.com/article/20/5/optimize-container-builds)  
 
+<div style="page-break-after: always;"></div>
+
 * **P2**  
-    `docker images`:  
-    ![](img/SA8-2-1.png)  
-    `docker run <ID>`:  
-    ![](img/SA8-2-2.png)  
-    Check `run.sh`:    
-    ![](img/SA8-2-3.png)
-    Set environmental variable with `-e VAR=value`:  
-    ![](img/SA8-2-4.png)  
+    `docker images`:  ![](img/SA8-2-1.png){height=45}  
+    `docker run <ID>`:  ![](img/SA8-2-2.png){height=30}  
+    Check `run.sh`:  ![](img/SA8-2-3.png){height=195}
+    Set environmental variable with `-e VAR=value`:  ![](img/SA8-2-4.png){height=60}  
 
     **Reference:**  
     docker man page & docker --help
     [https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)  
 
+<br>
+
 * **P3**  
     Rerun image in background with `-d` flag:  
-    ![](img/SA8-3-1.png)  
-    Get container id:  
-    ![](img/SA8-3-2.png)
-    Enter container with `docker exec -it <ID> /bin/bash`:  
-    ![](img/SA8-3-3.png)
-    Use `tcpdump -i any -nn -A` to sniff packets and show packet contents:  
-    ![](img/SA8-3-4.png)
-    Flag:  
+    ![](img/SA8-3-1.png){height=30}  Get container id:  
+    ![](img/SA8-3-2.png){height=30}  Enter container with `docker exec -it <ID> /bin/bash`:  
+    ![](img/SA8-3-3.png){height=30}  Use `tcpdump -i any -nn -A` to sniff packets and show packet contents:  
+    ![](img/SA8-3-4.png){height=150}
+    **Flag:**  
     flag[I'll send our killer on 3948/02/22]  
 
     **Reference:**  
@@ -542,4 +563,3 @@
     [https://docs.docker.com/reference/cli/docker/container/exec/](https://docs.docker.com/reference/cli/docker/container/exec/)  
     tcpdump man page  
     [https://opensource.com/article/18/10/introduction-tcpdump](https://opensource.com/article/18/10/introduction-tcpdump)
-
