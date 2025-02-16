@@ -163,7 +163,7 @@
         > The default host discovery done with -sn consists of an ICMP echo request, TCP SYN to port 443, TCP ACK to port 80, and an ICMP timestamp request by default. When executed by an unprivileged user, only SYN packets are sent (using a connect call) to ports 80 and 443 on the target.  
 
         Using the `-vvv` option we see:  
-        ![](img/NA2-2-2-1_alt.png){height=180}
+        ![](img/NA2-2-2-1_alt.png){height=165}
         We received a SYN-ACK, meaning the TCP SYN sent to port 80 / 443 gave us a response.  
 
     3.  Scan reults:  
