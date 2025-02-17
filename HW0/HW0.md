@@ -211,10 +211,12 @@
     3.  I/O throughput graph:  
         ![](img/NA3-1-3.png)
     4.  Highest transmission speed: 1.268MB/s
-        Time: 2.837 (second)
+        Time: 2.999641 (second)
     5.  29, search with filter with 'http.request.method == "GET"'.
     6.  There is a POST request to "/dashboard/invoices/create"  
-        Data in customer ID field:33393538646339652d373132662d343337372d383565392d666563346236613634343261
+        Data in customer ID field:  33393538646339652d373132662d343337372d383565392d666563346236613634343261
+        Hex to text:
+        3958dc9e-712f-4377-85e9-fec4b6a6442a
 
     **Reference:**  
     [https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html](https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html)
@@ -244,7 +246,7 @@
     1.  **Flag:**  NASA_HW0{1_10V3_r54}  
     2.  Process:  
         1.  Generate key
-        2.  Receive encrypted
+        2.  Receive encrypted message
         3.  Decrypt with CRT:
             $d_p = d \mod (p - 1)$
             $d_q = d \mod (q - 1)$
@@ -324,11 +326,16 @@
 * **P6**  
     It seems that during the TCP handshake in step 2, X sends SYN which arrives at A1, A sends (SYN, ACK), which goes through the default gateway, since B is a stateful firewall, it blocks A's out going (SYN, ACK), as it hasn't seen an ACK beforehand. This means X never receives the (SYN, ACK) no matter how many times it tries, and thus cannot establish a TCP connection.  
 * **P7**  
-    1. System shutdown: 5 ~ 15 minutes depending on services and active connections.
-    2. Certificate Update: 30 ~ 60 minutes, assuming we are talking about domain validation certificates, which are usually automatically validated.
+    1. System shutdown: 5 ~ 15 minutes depending on services and active connections.  
+    2. Certificate Update: 30 ~ 60 minutes, according to references.
     3. System restart and testing: 1 ~ 2 hours, to ensure all services are functional.  
-    4. Grace period/overflow time: 1 ~ 2 hours, For when something goes wrong and we need more time to identify, fix or reschedule another system maintenance.  
-    In total 6 hours.  
+    4. Grace period/overflow time: 1 hour, For when something goes wrong and we need more time to identify, fix or reschedule another system maintenance.  
+    In total 5 hours.  
+
+    **References:**  
+    [https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://support.dnsimple.com/articles/how-long-to-issue-ssl-certificate/&ved=2ahUKEwjF5MWZ98mLAxVtZvUHHWmfPOIQFnoECCAQAw&usg=AOvVaw0FNfWVElpy_Ab8QxcaEH8T](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://support.dnsimple.com/articles/how-long-to-issue-ssl-certificate/&ved=2ahUKEwjF5MWZ98mLAxVtZvUHHWmfPOIQFnoECCAQAw&usg=AOvVaw0FNfWVElpy_Ab8QxcaEH8T)  
+    [https://community.letsencrypt.org/t/lets-encrypt-cert-takes-long-time-to-issue/157985/2](https://community.letsencrypt.org/t/lets-encrypt-cert-takes-long-time-to-issue/157985/2)  
+    [https://community.letsencrypt.org/t/how-long-will-it-take-to-get-a-certificate/1200](https://community.letsencrypt.org/t/how-long-will-it-take-to-get-a-certificate/1200)  
 
 * **P8**  
     Remove A's A1 interface, and have it accept all data from its default gateway.  
