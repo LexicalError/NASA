@@ -16,7 +16,7 @@
     Segments the data through two main protocols, TCP / UDP, provides multiplexing through ports and reliable data transfer(TCP).  
     Example:
     HTTP using TCP's service to ensure a connection.
-    * **Network layer:**
+    * **Network layer (Internet layer):**
     Packs segments(or UDP datagrams) into IP datagrams, then routes the data to the destination.
     Example:
     TCP using IP to route to a destination.
@@ -108,29 +108,31 @@
 * **P6**  
     The multiplexing at layer 4 is the differentiation of different services on the same host, ports are used to multiplex and de-multiplex in this case.  
     Generally in networking, multiplexing is resource sharing between multiple hosts, 3 common types of multiplexing are:  
-    1. Time-division multiplexing
-    2. Frequency-division multiplexing
-    3. Statistical multiplexing  
+    1. TDM, time-division multiplexing, allocates different time segments to different hosts.
+    2. FDM, frequency-division multiplexing, allocates different frequency bandwidths to different hosts.  
+    3. Statistical multiplexing, unlike TDM, it allocates bandwidths dynamically, adapting to network traffic changes.  
 
-    The wifi in our department building likely uses FDM (or some variant of it), since wifi is transmitted over radio waves.  
+    The wifi in our department building likely uses FDM (or some variant of it) since wifi is transmitted over radio waves. Statistical multiplexing could also be used, allowing for potential bandwidth usage improvements.  
     **Reference:**
     **Computer Networking A Top-Down Approach**  
+    [https://en.wikipedia.org/wiki/Statistical_time-division_multiplexing](https://en.wikipedia.org/wiki/Statistical_time-division_multiplexing)  
+
 
 <div style="page-break-after: always;"></div>
 
 ### 2. Command Line Utilities
 
 * **P1**  
-    1.  traceroutev results:  
+    1.  `traceroute speed.ntu.edu.tw` results:  
         ![](img/NA2-1-1.png){height=75}  
-    2.  ping results:  
-        ![](img/NA2-1-2-1.png){height=120} nslookup results:  
+    2.  `ping speed.ntu.edu.tw` results:  
+        ![](img/NA2-1-2-1.png){height=120} `nslookup speed.ntu.edu.tw` results:  
         ![](img/NA2-1-2-2.png){height=120}  
     3.  From the reserved ip address ranges for private networks:  
         10.200.200.200 belongs to a private network.  
         140.112.4.126 and 140.112.5.178 belongs to the public network.  
     4.  traceroute works by sending probes with incrementing TTL, at each TTL, by default traceroute will send 3 probes, the 3 time values are the round trip time of each probe, if we change the amount of probes we send per TTL, the amount of time values we get will also change.  
-        Later results might not always be larger, for example, if a later node has a better path back to us, the round trip time might add up to be smaller.  
+        Later results might not always be larger, for example, the state of internet traffic might change in between probes, the round trip time might add up to be smaller.  
     5.  Sequence diagram:  
         ```mermaid
         sequenceDiagram
@@ -138,15 +140,15 @@
         participant 10.200.200.200
         participant 140.112.4.126
         participant 140.112.5.178
-        traceroute->>10.200.200.200: Send udp datagram (TTL=1)
-        10.200.200.200-->>traceroute: ICMP TIME_EXCEEDED
-        traceroute->>10.200.200.200: Send udp datagram (TTL=2)
-        10.200.200.200->>140.112.4.126: Forward udp datagram (TTL=1)
-        140.112.4.126-->>traceroute: ICMP TIME_EXCEEDED
-        traceroute->>10.200.200.200: Send udp datagram (TTL=3)
-        10.200.200.200->>140.112.4.126: Forward udp datagram (TTL=2)
-        140.112.4.126->>140.112.5.178: Forward udp datagram (TTL=1)
-        140.112.5.178-->>traceroute: icmp unreach port
+        traceroute->>10.200.200.200: Send udp datagram (TTL=1) $$\times 3$$
+        10.200.200.200-->>traceroute: ICMP TIME_EXCEEDED $$\times 3$$
+        traceroute->>10.200.200.200: Send udp datagram (TTL=2) $$\times 3$$
+        10.200.200.200->>140.112.4.126: Forward udp datagram (TTL=1) $$\times 3$$
+        140.112.4.126-->>traceroute: ICMP TIME_EXCEEDED $$\times 3$$
+        traceroute->>10.200.200.200: Send udp datagram (TTL=3) $$\times 3$$
+        10.200.200.200->>140.112.4.126: Forward udp datagram (TTL=2) $$\times 3$$
+        140.112.4.126->>140.112.5.178: Forward udp datagram (TTL=1) $$\times 3$$
+        140.112.5.178-->>traceroute: icmp unreach port $$\times 3$$
         ```
     **Reference:**  
     traceroute man page
@@ -154,47 +156,45 @@
 <div style="page-break-after: always;"></div>
 
 * **P2**  
-    1.  ping sends ICMP ECHO_REQUESTs.  
-        ping results:  
+    1.  ping sends ICMP ECHO_REQUESTs and receives ICMP ECHO_REPLYs.  
+        `ping 140.112.91.2` results:  
         ![](img/NA2-2-1-2.png){height=75}  
-    2.  nmap results:  
-        ![](img/NA2-2-2-1.png){height=75}
-        We see that ping is unable to get a response while nmap with the `-sn` option can, from nmaps man page:  
+    2.  `nmap -sn 140.112.91.2` results:  
+        ![](img/NA2-2-2-1.png){height=75} We see that ping is unable to get a response while nmap with the `-sn` option can (`-sn` is for ping scanning in nmap), from nmaps man page:  
         > The default host discovery done with -sn consists of an ICMP echo request, TCP SYN to port 443, TCP ACK to port 80, and an ICMP timestamp request by default. When executed by an unprivileged user, only SYN packets are sent (using a connect call) to ports 80 and 443 on the target.  
 
-        Using the `-vvv` option we see:  
-        ![](img/NA2-2-2-1_alt.png){height=165}
-        We received a SYN-ACK, meaning the TCP SYN sent to port 80 / 443 gave us a response.  
+        Using the `-vvv` option, `nmap -vvv -sn 140.112.91.2` results:  
+        ![](img/NA2-2-2-1_alt.png){height=165} We received a SYN-ACK, meaning the TCP SYN sent to port 80 / 443 gave us a response.  
 
-    3.  Scan reults:  
-        ![](img/NA2-2-3-1.png){height=165}  
-        Service: http
+    3.  `nmap -p80 -sV 140.112.91.2` reults:  
+        ![](img/NA2-2-3-1.png){height=165} Service: http
         Version: nginx 1.26.2
         http is a request-response protocol used to transmit data over the web.  
-        Command:  `nmap -p80 -sV 140.112.91.2`  
     
-    4.  POST response:  
-        ![](img/NA2-2-4-1.png){height=30} nmap scan results:  
-        ![](img/NA2-2-4-2.png){height=120} netcat response:  
+    4.  `curl http://140.112.91.2/ -d "hi"` (POST) response:  
+        ![](img/NA2-2-4-1.png){height=30} `nmap 140.112.91.2 -p48000-49000` results:  
+        ![](img/NA2-2-4-2.png){height=135} `nc 140.112.91.2 48763` response:  
         ![](img/NA2-2-4-3.png){height=30}
-    
+
     **Reference:**
     ping, nmap, and curl man pages.  
+    **Note:**  
+    Some dates in command outputs are not in order, this is due to me screenshotting the original command outputs badly, the newer dates are from me rerunning the commands to get better screenshots.  
 
 <div style="page-break-after: always;"></div>
 
 
 * **P3**  
-    1.  nslookup results:  
+    1.  `nslookup Bocchi-Tracker.csie.ntu.edu.tw` results:  
         ![alt text](img/NA2-3-1.png){height=105}
         IP: 140.112.30.131  
-    2.  nslookup results:  
+    2.  `nslookup 140.112.30.131` results:  
         ![](img/NA2-3-2.png){height=75}
         Domain name: Starry.csie.ntu.edu.tw  
-    3.  nslookup results:  
+    3.  `nslookup -q=txt Starry.csie.ntu.edu.tw` results:  
         ![](img/NA2-3-3.png){height=195}  
         TXT: "Your guitar is in the box"
-    4.  dig results:  
+    4.  `dig "Bocchi-Tracker.csie.ntu.edu.tw"` results:  
         ![](img/NA2-3-4.png){height=375}
         CNAME: Gu1tArHer0.csie.ntu.edu.tw  
     
@@ -208,18 +208,19 @@
 * **P1**   
     1.  Port 3000
     2.  We see multiple ACKS from port 3000 after SYN was sent to it, we also see that port 3000 receives HTTP requests, and sends back HTTP responses.  
-    3.  I/O throughput graph:  
-        ![](img/NA3-1-3.png)
+    3.  I/O throughput graph (Statistics>IO graphs):  
+        ![](img/NA3-1-3.png){height=350}
     4.  Highest transmission speed: 1.268MB/s
         Time: 2.999641 (second)
-    5.  29, search with filter with 'http.request.method == "GET"'.
+    5.  29, search with filter with 'http.request.method == "GET"', bottom right corner shows amount of packets.
     6.  There is a POST request to "/dashboard/invoices/create"  
         Data in customer ID field:  33393538646339652d373132662d343337372d383565392d666563346236613634343261
         Hex to text:
         3958dc9e-712f-4377-85e9-fec4b6a6442a
 
     **Reference:**  
-    [https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html](https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html)
+    [https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html](https://www.wireshark.org/docs/wsug_html_chunked/ChStatIOGraphs.html)  
+    [https://www.rapidtables.com/convert/number/hex-to-ascii.html](https://www.rapidtables.com/convert/number/hex-to-ascii.html)
 
 <br>
 
@@ -229,7 +230,7 @@
         3. Edit RSA keys list.
         4. Set IP to 127.0.0.1, port 443, and select private key file.  
     2.  Packet number 32.  
-        1. Go to File>Export Objects>HTTP.
+        1. Go to File>Export Objects>HTTP (we see that the png is in packet number 32).
         2. Save image.
         Image:  
         ![](img/NA3-2-2.png)  
@@ -318,18 +319,17 @@
     **Reference:**  
     [https://en.wikipedia.org/wiki/Default_gateway](https://en.wikipedia.org/wiki/Default_gateway)
 * **P5**  
-    Stateful firewalls monitor packets by tracking the state of incoming network connections, while stateless firewalls monitor each package individually.  
-    Stateful firewalls are more likely to block a TCP ACK without a SYN.  
+    Stateful firewalls monitor packets by tracking the state of incoming network connections, while stateless firewalls monitor each package individually. Stateful firewalls are more likely to block a TCP ACK without a SYN.  
     **Reference:**  
     [https://en.wikipedia.org/wiki/Stateful_firewall](https://en.wikipedia.org/wiki/Stateful_firewall)
     [https://www.checkpoint.com/cyber-hub/network-security/what-is-firewall/what-is-a-stateless-firewall/](https://www.checkpoint.com/cyber-hub/network-security/what-is-firewall/what-is-a-stateless-firewall/)
 * **P6**  
-    It seems that during the TCP handshake in step 2, X sends SYN which arrives at A1, A sends (SYN, ACK), which goes through the default gateway, since B is a stateful firewall, it blocks A's out going (SYN, ACK), as it hasn't seen an ACK beforehand. This means X never receives the (SYN, ACK) no matter how many times it tries, and thus cannot establish a TCP connection.  
+    It seems that during the TCP handshake in step 2, X sends SYN which arrives at A1, A sends (SYN, ACK), which goes through the default gateway, since B is a stateful firewall, it blocks A's out going (SYN, ACK), as it hasn't seen a SYN beforehand. This means X never receives the (SYN, ACK) no matter how many times it tries, and thus cannot establish a TCP connection.  
 * **P7**  
     1. System shutdown: 5 ~ 15 minutes depending on services and active connections.  
     2. Certificate Update: 30 ~ 60 minutes, according to references.
     3. System restart and testing: 1 ~ 2 hours, to ensure all services are functional.  
-    4. Grace period/overflow time: 1 hour, For when something goes wrong and we need more time to identify, fix or reschedule another system maintenance.  
+    4. Grace period/overflow time: 1 hour, for when something goes wrong, gives us more time to identify and fix the problems, or restore the system to its previous useable state.
     In total 5 hours.  
 
     **References:**  
@@ -338,8 +338,9 @@
     [https://community.letsencrypt.org/t/how-long-will-it-take-to-get-a-certificate/1200](https://community.letsencrypt.org/t/how-long-will-it-take-to-get-a-certificate/1200)  
 
 * **P8**  
-    Remove A's A1 interface, and have it accept all data from its default gateway.  
-    Add a route entry to A's route table that directly connects A1 to X through the WAN.  
+    Make sure that A has a route specification through A1 directly to X through the WAN.  
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/Default_gateway](https://en.wikipedia.org/wiki/Default_gateway)
 * **P9**  
     Yes :3
 
@@ -350,6 +351,16 @@
 ### 6. btw I use arch  
 
 * **P0**  
+    **Reference:**  
+    [https://wiki.archlinux.org/title/Installation_guide](https://wiki.archlinux.org/title/Installation_guide)
+    [https://wiki.archlinux.org/title/System_time](https://wiki.archlinux.org/title/System_time)
+    [https://wiki.archlinux.org/title/Fdisk](https://wiki.archlinux.org/title/Fdisk)
+    [https://man.archlinux.org/man/vconsole.conf.5.en](https://man.archlinux.org/man/vconsole.conf.5.en)
+    [https://wiki.archlinux.org/title/Linux_console#Fonts](https://wiki.archlinux.org/title/Linux_console#Fonts)
+    [https://wiki.archlinux.org/title/Users_and_groups#Example_adding_a_user](https://wiki.archlinux.org/title/Users_and_groups#Example_adding_a_user)  
+
+    <br>  
+
     My installation of Arch was done in a proxmox VM, pre-installation steps:  
     1.  Set boot mode to OVMF (UEFI) in VM creation configuration.  
     2.  Enter firmware settings upon first boot.  
@@ -368,7 +379,7 @@
         1.  `fdisk /dev/sda`.  
         2.  Create partition table `g`.  
         3.  Create partitions: `n`, default, default, `+Size`.  
-        4.  Change partition types: `t`, type.  
+        4.  Change partition types: `t`, `<partition number>`, type.  
         5.  Check changes: `p`.  
             ![](img/SA6-0-5.png){height=240}  
         6.  Write changes: `w`.  
@@ -376,7 +387,10 @@
         Root partition: `mkfs.ext4 /dev/sda1`.
         Home partition: `mkfs.ext4 /dev/sda2`.
         ESP: `mkfs.fat -F 32 /dev/sda3`.
-        Swap partition: `mkswap /dev/sda4`.
+        Swap partition: `mkswap /dev/sda4`.  
+
+    <div style="page-break-after: always;"></div>
+
     7.  Mount partitions:
         Root partition: `mount /dev/sda1 /mnt`.
         Home partition: `mount --mkdir /dev/sda2 /mnt/home`.
@@ -385,9 +399,6 @@
     8. Install essential packages:  `pacstrap -K /mnt base linux linux-firmware networkmanager vim man-db man-pages texinfo`.  
     9.  Generate Fstab: `genfstab -U /mnt >> /mnt/etc/fstab`.  
     10. Chroot: `arch-chroot /mnt`.  
-
-    <div style="page-break-after: always;"></div>
-
     11. Time:
         1. Set timezone: `ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime`.  
         2. generate `/etc/adjtime`: `hwclock --systohc`.  
@@ -415,14 +426,6 @@
         3. Reload: `systemctl restart systemd-vconsole-setup`.  
     19. Add user: `useradd -m nasa`, and set password: `passwd nasa`  
 
-    **Reference:**  
-    [https://wiki.archlinux.org/title/Installation_guide](https://wiki.archlinux.org/title/Installation_guide)
-    [https://wiki.archlinux.org/title/System_time](https://wiki.archlinux.org/title/System_time)
-    [https://wiki.archlinux.org/title/Fdisk](https://wiki.archlinux.org/title/Fdisk)
-    [https://man.archlinux.org/man/vconsole.conf.5.en](https://man.archlinux.org/man/vconsole.conf.5.en)
-    [https://wiki.archlinux.org/title/Linux_console#Fonts](https://wiki.archlinux.org/title/Linux_console#Fonts)
-    [https://wiki.archlinux.org/title/Users_and_groups#Example_adding_a_user](https://wiki.archlinux.org/title/Users_and_groups#Example_adding_a_user)  
-
 <div style="page-break-after: always;"></div>
 
 * **P1**  
@@ -432,15 +435,19 @@
 <br>
 
 * **P2**  
-    ![](img/SA6-2-1.png){height=120}
-    ![](img/SA6-2-2.png){height=120}
+    `lsblk -l` results:  
+    ![](img/SA6-2-1.png){height=120}  
+    `lsblk` results:  
+    ![](img/SA6-2-2.png){height=120}  
     **Reference:**  
     lsblk man page.  
 
 <br>
 
 * **P3**  
-    ![](img/SA6-3-1.png){height=180}
+    `cat /etc/os-release` results:  
+    ![](img/SA6-3-1.png){height=180}  
+    `uname -sr` results:  
     ![](img/SA6-3-2.png){height=30}
 
     **Reference:**  
@@ -456,10 +463,10 @@
         Path: `/home/nasa/kickstart.nvim/.git/logs/refs/remotes/origin/HEAD`  
     2.  With `export HISTSIZE=<number>`  
     3.  With `export HISTFILESIZE=<number>`  
-    4.  Default history file:  
+    4.  `cat .bash_history` to see default history file:  
         ![](img/SA7-1-4-1.png){height=45}  
         In line 104 of new history file (using `less` and go to line x):
-        ![](img/SA7-1-4-2.png){height=15}  
+        ![](img/SA7-1-4-2.png){height=23}  
         **Flag:**  NASA{y0UF1nd+heCoRr3tFL4G}  
 
     **Reference:**  
@@ -470,14 +477,14 @@
 * **P2**  
     From `./treasure`:  
     ![](img/SA7-2-1.png){height=135}  
-    In `treasure-chest/`, with `sort -Sl`:  
+    In `treasure-chest/`, with `ls -Sl`:  
     ![](img/SA7-2-2.png){height=105}  
     In line 418 in `treasure-chest/flag-962` (using `less` and go to line x):  
     ![](img/SA7-2-3.png){height=105}  
     **Flag:** NASA{EZ_TrEa$Ur3_HunT!}  
 
     **Reference:**  
-    sort man page  
+    ls man page  
 
 <div style="page-break-after: always;"></div>
 
@@ -493,7 +500,7 @@
 <br>
 
 * **P4**  
-    We can use two `grep`s to get the passcode:  
+    We can use two `grep`s to get the passcode, `strings chal | grep 486 | grep re02`:  
     ![](img/SA7-4-1.png){height=30}  
     ![](img/SA7-4-2.png){height=30}  
     **Flag:** NASA2025{n4ndeharuh1ka93yatt4n0}  
@@ -501,8 +508,8 @@
 <br>
 
 * **P5**  
-    Find and check `tmux` config file:  
-    ![](img/SA7-5-1.png){height=30}  
+    Find `tmux` config file with `find . -name ".tmux.conf`:  
+    ![](img/SA7-5-1.png){height=30} `cat .tmux.conf` results:  
     ![](img/SA7-5-2.png){height=60}  
     We see that the prefix has been set to Ctrl-a.  
     After entering `tmux`, we can make the layout with the following series of commands:  
@@ -524,16 +531,16 @@
 ### 8. NASA 國的大危機  
 
 * **P1**  
-    `Dockerfile`:
+    *`cat Dockerfile` results:
     ![](img/SA8-1.png){height=420}
-    `FROM python:3.9-slim`:  Specify the base image that we are building.  
-    `RUN apt-get update && apt-get install -y ... && rm -rf /var/lib/apt/lists/*`: Update package manager and install packages, the `rm` is to remove files created by `apt-get update`, this is done to reduce the layer size.  
-    `RUN mdkir -p /usr/libexec/run`: create directory.  
-    `COPY usr/libexec/run/dist/transfer /usr/libexec/run/transfer`: Copies file into the filesystem.
-    `COPY usr/libexec/run/run.sh /usr/libexec/run/run.sh`: Copies file into the filesystem.  
-    `RUN chmod +x /usr/libexec/run/transfer`: Change the newly copied file into an executable.  
-    `RUN chmod +x /usr/libexec/run/run.sh`: Change the newly copied file into an executable.  
-    `CMD ["/usr/libexec/run/run.sh"]`: Sets the script `run.sh` to run when launching the build image.  
+    * `FROM python:3.9-slim`:  Specify the base image that we are building.  
+    * `RUN apt-get update && apt-get install -y ... && rm -rf /var/lib/apt/lists/*`: Update package manager and install packages, the `rm` is to remove files created by `apt-get update`, this is done to reduce the layer size.  
+    * `RUN mdkir -p /usr/libexec/run`: create directory.  
+    * `COPY usr/libexec/run/dist/transfer /usr/libexec/run/transfer`: Copies file into the filesystem.
+    * `COPY usr/libexec/run/run.sh /usr/libexec/run/run.sh`: Copies file into the filesystem.  
+    * `RUN chmod +x /usr/libexec/run/transfer`: Change the newly copied file into an executable.  
+    * `RUN chmod +x /usr/libexec/run/run.sh`: Change the newly copied file into an executable.  
+    * `CMD ["/usr/libexec/run/run.sh"]`: Sets the script `run.sh` to run when launching the build image.  
 
     **Reference:**  
     [https://docs.docker.com/reference/dockerfile/](https://docs.docker.com/reference/dockerfile/)
@@ -548,7 +555,7 @@
     `docker images`:  ![](img/SA8-2-1.png){height=45}  
     `docker run <ID>`:  ![](img/SA8-2-2.png){height=30}  
     Check `run.sh`:  ![](img/SA8-2-3.png){height=195}
-    Set environmental variable with `-e VAR=value`:  ![](img/SA8-2-4.png){height=60}  
+    Set environmental variable with `-e VAR=value`, `docker run -e MAGIC_SPELL="hahahaiLoveNASA" <ID>`:  ![](img/SA8-2-4.png){height=60}  
 
     **Reference:**  
     docker man page & docker --help
@@ -557,8 +564,8 @@
 <br>
 
 * **P3**  
-    Rerun image in background with `-d` flag:  
-    ![](img/SA8-3-1.png){height=30}  Get container id:  
+    Rerun image in background with `-d` flag,  `docker run -e MAGIC_SPELL="hahahaiLoveNASA" -d <ID>`:  
+    ![](img/SA8-3-1.png){height=30}  Get container id with `docker ps -q`:  
     ![](img/SA8-3-2.png){height=30}  Enter container with `docker exec -it <ID> /bin/bash`:  
     ![](img/SA8-3-3.png){height=30}  Use `tcpdump -i any -nn -A` to sniff packets and show packet contents:  
     ![](img/SA8-3-4.png){height=150}
@@ -566,7 +573,7 @@
     flag[I'll send our killer on 3948/02/22]  
 
     **Reference:**  
-    docker man page & docker --help  
+    docker man page & `docker help`  
     [https://docs.docker.com/reference/cli/docker/container/exec/](https://docs.docker.com/reference/cli/docker/container/exec/)  
     tcpdump man page  
     [https://opensource.com/article/18/10/introduction-tcpdump](https://opensource.com/article/18/10/introduction-tcpdump)
