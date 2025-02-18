@@ -83,7 +83,7 @@
 
 * **P4**  
     * **UDP**  
-    UDP is connectionless protocol, it works by providing "best effort" service: sending data without establishing a connection before hand, allowing you to send data without needing to care if the other end is even available or not.  
+    UDP is connectionless protocol, it works by providing "best effort" service: sending data without establishing a connection beforehand, allowing you to send data without needing to care if the other end is even available or not.  
     * **TCP**  
     TCP works by establishing a connection first, then sending data over, TCP provides reliable data transfer, deals with errors and packet loses, and provides congestion control.  
 
@@ -211,7 +211,7 @@
     3.  I/O throughput graph (Statistics>IO graphs):  
         ![](img/NA3-1-3.png){height=350}
     4.  Highest transmission speed: 1.268MB/s
-        Time: 2.999641 (second)
+        Time: 2s (from the graph)
     5.  29, search with filter with 'http.request.method == "GET"', bottom right corner shows amount of packets.
     6.  There is a POST request to "/dashboard/invoices/create"  
         Data in customer ID field:  33393538646339652d373132662d343337372d383565392d666563346236613634343261
