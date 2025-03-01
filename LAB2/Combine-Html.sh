@@ -1,5 +1,4 @@
 #!/bin/bash
-
 usage(){
     echo 'Usage: ./Combine-Html --input [input file] --output [output file]'
     exit 1
@@ -55,15 +54,13 @@ comb(){
      
 
     if [[ (! -e $file) || (! -f $file) || (! -r $file) ]]; then
-        echo "<p style=\"color:red;\">Cannot access $1</p>"
-        exit 1
-    fi
-
-    if [[ ("$type" == "jpg") || ("$type" == "png") ]]; then
-        echo "<img src=\"data:image/$type;base64,$(base64 -w0 $file)\" />"
-        exit 0
-    fi
-    sed -E 's/(.*)(<include src=")([[:alnum:]_/\.]+)(" \/>)(.*)/echo -n "\1" \&\& comb \3 \&\& echo -n "\5"/eg' $file | sed -ze 's/\n$//' 
+        echo -n "<p style=\"color:red;\">Cannot access $1</p>"
+    
+    elif [[ ("$type" == "jpg") || ("$type" == "png") ]]; then
+        echo -n "<img src=\"data:image/$type;base64,$(base64 -w0 $file)\" />"
+    else 
+    sed -E ':x; s/(.*)(<include src=")([[:alnum:]_/\.]+)(" \/>)(.*)/echo -n '"\'\1\'"' \; comb \3 \; echo -n '"\'\5\'/"'eg; tx' $file | sed -ze 's/\n$//' 
+    fi 
 }
 
 
