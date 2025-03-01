@@ -150,20 +150,8 @@ build(){
         n=$((n+1))
     done
     echo ''
-    k=0
-    # k = 0
-    for ((i = 1; i <= n; i++)); do            
-        hex "$(M $i $i $target_dir)"
-        # M $i $i $target_dir
-        if ((i < n)); then
-            echo -n ':'
-        else
-            echo ''
-        fi
-    done
-    # k >= 1
     K=$(echo "$n" | awk 'function ceil(x){return int(x) + (x > int(x))} {print ceil(log($1) / log(2))}')
-    for((k = 1; k <= K; k++)); do
+    for((k = 0; k <= K; k++)); do
         N=$(echo "$n $k" | awk 'function floor(x){return int(x) - (x < int(x))} {print floor($1 / exp(log(2) * $2))}')
         for ((i = 1; i <= $N; i++)); do
             start=$(echo "$i $k" | awk '{print ($1 - 1) * exp(log(2) * $2) + 1}')
@@ -174,7 +162,9 @@ build(){
                 echo -n ':'
             fi
         done
-        if (( (n % (2**k)) <= (2**(k-1)) )); then
+        if (( k == 0 )); then
+            echo ''
+        elif (( (n % (2**k)) <= (2**(k-1)) )); then
             echo ''
         else
             if (( $N > 0)); then
@@ -206,17 +196,60 @@ pi(){
 }
 
 gen-proof(){
+    return 0
     leaf_file=$1
     tree_file=$2
+    file_in_tree=0
+    leaf_index=0
+    n=0
+    tmp_k=0
     declare -g p=()
+    declare -g -A hashes
     while IFS='' read -r line; do
         if [[ $line == '' ]]; then
-            break;
+            # Read hashes
+            K=$(echo "$n" | awk 'function ceil(x){return int(x) + (x > int(x))} {print ceil(log($1) / log(2))}')
+            for((k = 1; k <= K; k++)); do
+                N=$(echo "$n $k" | awk 'function floor(x){return int(x) - (x < int(x))} {print floor($1 / exp(log(2) * $2))}')
+                for ((i = 1; i <= $N; i++)); do
+                    start=$(echo "$i $k" | awk '{print ($1 - 1) * exp(log(2) * $2) + 1}')
+                    end=$(echo "$i $k" | awk '{print $1 * exp(log(2) * $2)}')
+                    hex "$(M $start $end $target_dir)"
+                    # M $start $end $target_dir
+                    if ((i < N)); then
+                        echo -n ':'
+                    fi
+                done
+                if (( k == 0 )); then
+                    echo ''
+                elif (( (n % (2**k)) <= (2**(k-1)) )); then
+                    echo ''
+                else
+                    if (( $N > 0)); then
+                        echo -n ':'
+                    fi
+                    start=$(echo "$N $k" | awk '{print $1 * exp(log(2) * $2) + 1}')
+                    end=$n
+                    hex "$(M $start $end $target_dir)"
+                    # M $start $end $target_dir
+                    echo ''
+                fi
+            done
+        elif [[ "$line" == "$leaf_file" ]]; then
+            file_in_tree=1
+            i=$((n + 1))
         fi
         echo "$line"
-        p+=("$line") 
+        p+=("$line")
+        n=$((n + 1))
     done < $tree_file
-
+    if (( $file_in_tree == 0 )); then
+        echo 'ERROR: file not found in tree'
+        exit 1
+    else
+        echo "leaf_index:$i,tree_size:$n"
+        pi "$leaf_index" "1" "$n" 
+    fi
 }
 
 verify-proof(){

@@ -9,3 +9,4 @@
 [https://stackoverflow.com/questions/37432680/roundup-function-in-unix](https://stackoverflow.com/questions/37432680/roundup-function-in-unix)
 [https://stackoverflow.com/questions/10929453/read-a-file-line-by-line-assigning-the-value-to-a-variable](https://stackoverflow.com/questions/10929453/read-a-file-line-by-line-assigning-the-value-to-a-variable)
 [https://stackoverflow.com/questions/1951506/add-a-new-element-to-an-array-without-specifying-the-index-in-bash](https://stackoverflow.com/questions/1951506/add-a-new-element-to-an-array-without-specifying-the-index-in-bash)
+[https://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash](https://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash)
