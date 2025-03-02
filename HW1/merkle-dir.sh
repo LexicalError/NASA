@@ -97,66 +97,60 @@ while (($# > 0)); do
 done
 
 dir_walk(){
-
-    for i in "$1"/* "$1"/.*; do
-        if [[ -h $i ]]; then
+    cd "$target_dir"
+    local list=($(find . -type f | LC_COLLATE=C sort))
+    for dir_i in ${list[@]}; do
+        if [[ (-h "$dir_i") || ("$dir_i" == "$1") || (-d "$dir_i") ]]; then
             continue
-        elif [[ -d $i ]]; then
-            export -f dir_walk
-            dir_walk $i 
-        elif [[ -f $i ]]; then
-            echo ${i:2}
+        elif [[ -f "$dir_i" ]]; then
+            echo ${dir_i:2}
         fi
     done
 }
 
 H(){
     if [[ "$2" == "file" ]]; then 
-        sha256sum $1 | awk '{print $1}' | xxd -r -p 
+        # sha256sum $1 | awk '{print $1}' | xxd -r -p 
+        sha256sum $1 | awk '{print $1}' | tr -d '\n'
     else
-        echo -n "$1" | sha256sum | awk '{print $1}' | xxd -r -p 
+        # Hex to binary first
+        echo -n "$1" | xxd -r -p | sha256sum | awk '{print $1}' | tr -d '\n'
     fi
 }
 
-hex(){
-    echo -n "$1" | xxd -p -c 0 | sed -ze 's/\n$//g'
-}
-
 M(){
-    i=$1
-    j=$2
-    dir=$3
-    if ((i == j)); then
-        H "$dir/${p[$((i - 1))]}" "file"
+    local M_i=$1
+    local M_j=$2
+    local M_dir=$3
+    if ((M_i == M_j)); then
+        H "$M_dir/${p[$((M_i - 1))]}" "file"
     else
-        m=$((j - i + 1))
+        local M_m=$((M_j - M_i + 1))
         # 2^a = e^(ln2)a
-        k=$(echo $m | awk 'function floor(x){return int(x) - (x < int(x))} {print exp(log(2) * floor(log($1 - 1) / log(2)))}')
-        hash1=$(M $i $((k + i - 1)) $dir)
-        hash2=$(M $((k + i)) $((m + i - 1)) $dir)
+        local M_k=$(echo $M_m | awk 'function floor(x){return int(x) - (x < int(x))} {print exp(log(2) * floor(log($1 - 1) / log(2)))}')
+        # Concatenate in hex to prevent losing null bytes
+        hash1=$(M "$M_i" "$((M_k + M_i - 1))" "$M_dir")
+        hash2=$(M "$((M_k + M_i))" "$((M_m + M_i - 1))" "$M_dir")
         H "$hash1""$hash2" "hash" 
     fi
 }
 
 build(){
-    prev_dir=$(pwd)
-    target_dir=$1
-    cd $target_dir
-    declare -g p=($(dir_walk .))
-    cd $prev_dir
-    n=0
-    for i in "${p[@]}"; do
-        echo $i
+    local target_dir=$1
+    declare -g p=($(dir_walk "$target_dir"))
+    local n=0
+    for file in "${p[@]}"; do
+        echo $file
         n=$((n+1))
     done
     echo ''
-    K=$(echo "$n" | awk 'function ceil(x){return int(x) + (x > int(x))} {print ceil(log($1) / log(2))}')
+    local K=$(echo "$n" | awk 'function ceil(x){return int(x) + (x > int(x))} {print ceil(log($1) / log(2))}')
     for((k = 0; k <= K; k++)); do
-        N=$(echo "$n $k" | awk 'function floor(x){return int(x) - (x < int(x))} {print floor($1 / exp(log(2) * $2))}')
-        for ((i = 1; i <= $N; i++)); do
-            start=$(echo "$i $k" | awk '{print ($1 - 1) * exp(log(2) * $2) + 1}')
-            end=$(echo "$i $k" | awk '{print $1 * exp(log(2) * $2)}')
-            hex "$(M $start $end $target_dir)"
+        local N=$(echo "$n $k" | awk 'function floor(x){return int(x) - (x < int(x))} {print floor($1 / exp(log(2) * $2))}')
+        for ((i = 1; i <= N; i++)); do
+            local start="$(echo "$i $k" | awk '{print ($1 - 1) * exp(log(2) * $2) + 1}')"
+            local end="$(echo "$i $k" | awk '{print $1 * exp(log(2) * $2)}')"
+            M "$start" "$end" "$target_dir"
             # M $start $end $target_dir
             if ((i < N)); then
                 echo -n ':'
@@ -167,12 +161,12 @@ build(){
         elif (( (n % (2**k)) <= (2**(k-1)) )); then
             echo ''
         else
-            if (( $N > 0)); then
+            if (( N > 0)); then
                 echo -n ':'
             fi
-            start=$(echo "$N $k" | awk '{print $1 * exp(log(2) * $2) + 1}')
-            end=$n
-            hex "$(M $start $end $target_dir)"
+            local start="$(echo "$N $k" | awk '{print $1 * exp(log(2) * $2) + 1}')"
+            local end="$n"
+            M "$start" "$end" "$target_dir"
             # M $start $end $target_dir
             echo ''
         fi
@@ -180,92 +174,134 @@ build(){
 }
 
 pi(){
-    i=$1
-    s=$2
-    m=$3
-    dir=$4
-    k=$(echo $m | awk 'function floor(x){return int(x) - (x < int(x))} {print exp(log(2) * floor(log($1 - 1) / log(2)))}')
-    if (($m == 1)); then
+    local j=$1
+    local s=$2
+    local m=$3
+    local k=$(echo $m | awk 'function floor(x){return int(x) - (x < int(x))} {print exp(log(2) * floor(log($1 - 1) / log(2)))}')
+    if ((m == 1)); then
         echo -n ' '
     elif ((j <= k)); then
-        echo -n "$(pi $j $s $k $dir) $(M $((s + k)) $((s + m - 1)) $dir) "
+        #  M s+k s+m-1
+        echo -n "$(pi "$j" "$s" "$k") ${hashes["$((s + k))" "$((s + m - 1))"]} "
     else
-        echo -n "$(pi $((j - k)) $((s + k)) $((m - k)) $dir) $(M $s $((s + k - 1)) $dir) "
+        # M s s+k-1
+        echo -n "$(pi $((j - k)) $((s + k)) $((m - k))) ${hashes["$s $((s + k - 1))"]} "
     fi
-
 }
 
 gen-proof(){
-    return 0
-    leaf_file=$1
-    tree_file=$2
-    file_in_tree=0
-    leaf_index=0
-    n=0
-    tmp_k=0
-    declare -g p=()
+    local leaf_file=$1
+    local tree_file=$2
+    local file_in_tree=0
+    local leaf_index=0
+    local n=0
     declare -g -A hashes
+    # Read files
     while IFS='' read -r line; do
         if [[ $line == '' ]]; then
-            # Read hashes
-            K=$(echo "$n" | awk 'function ceil(x){return int(x) + (x > int(x))} {print ceil(log($1) / log(2))}')
-            for((k = 1; k <= K; k++)); do
-                N=$(echo "$n $k" | awk 'function floor(x){return int(x) - (x < int(x))} {print floor($1 / exp(log(2) * $2))}')
-                for ((i = 1; i <= $N; i++)); do
-                    start=$(echo "$i $k" | awk '{print ($1 - 1) * exp(log(2) * $2) + 1}')
-                    end=$(echo "$i $k" | awk '{print $1 * exp(log(2) * $2)}')
-                    hex "$(M $start $end $target_dir)"
-                    # M $start $end $target_dir
-                    if ((i < N)); then
-                        echo -n ':'
-                    fi
-                done
-                if (( k == 0 )); then
-                    echo ''
-                elif (( (n % (2**k)) <= (2**(k-1)) )); then
-                    echo ''
-                else
-                    if (( $N > 0)); then
-                        echo -n ':'
-                    fi
-                    start=$(echo "$N $k" | awk '{print $1 * exp(log(2) * $2) + 1}')
-                    end=$n
-                    hex "$(M $start $end $target_dir)"
-                    # M $start $end $target_dir
-                    echo ''
-                fi
-            done
+            break
         elif [[ "$line" == "$leaf_file" ]]; then
             file_in_tree=1
-            i=$((n + 1))
+            leaf_index=$((n + 1))
         fi
-        echo "$line"
-        p+=("$line")
+        # echo "$line"
         n=$((n + 1))
     done < $tree_file
-    if (( $file_in_tree == 0 )); then
-        echo 'ERROR: file not found in tree'
-        exit 1
-    else
-        echo "leaf_index:$i,tree_size:$n"
-        pi "$leaf_index" "1" "$n" 
+
+    # Leaf not found in tree file
+    if (( file_in_tree == 0 )); then
+        return 1
     fi
+
+    # Read hashes
+    local parsed_hashes=($(awk 'NF==0 {flag=1; next} flag{n=split($0,arr,":"); for (i=1; i<=n; i++) print(arr[i])}' $tree_file))
+    local tmp_index=0
+    local K=$(echo "$n" | awk 'function ceil(x){return int(x) + (x > int(x))} {print ceil(log($1) / log(2))}')
+    for((k = 0; k <= K; k++)); do
+        local N=$(echo "$n $k" | awk 'function floor(x){return int(x) - (x < int(x))} {print floor($1 / exp(log(2) * $2))}')
+        for ((i = 1; i <= $N; i++)); do
+            local start=$(echo "$i $k" | awk '{print ($1 - 1) * exp(log(2) * $2) + 1}')
+            local end=$(echo "$i $k" | awk '{print $1 * exp(log(2) * $2)}')
+            # M $start $end 
+            hashes["$start $end"]="${parsed_hashes[$tmp_index]}"
+            tmp_index=$((tmp_index+1))
+        done
+        if (( k == 0 )); then
+            continue
+        elif (( (n % (2**k)) <= (2**(k-1)) )); then
+            continue
+        else
+            local start=$(echo "$N $k" | awk '{print $1 * exp(log(2) * $2) + 1}')
+            local end=$n
+            # M $start $end 
+            hashes["$start $end"]="${parsed_hashes[$tmp_index]}"
+            tmp_index=$((tmp_index+1))
+        fi
+    done
+
+    echo "leaf_index:$leaf_index,tree_size:$n"
+    proof=($(pi "$leaf_index" "1" "$n")) 
+    for l in ${proof[@]}; do
+        echo "$l"
+    done
 }
 
 verify-proof(){
-    echo "verify-proof"
+    local f=$1
+    local proof_file=$2
+    local root_hash=$3
+    local k=$(head -n 1 "$proof_file" | awk -F '[:,]' '{ print $2 }' )
+    local n=$(head -n 1 "$proof_file" | awk -F '[:,]' '{ print $4 }' )
+    local pi_p=($(tail -n +2 "$proof_file"))
+    local m=${#pi_p[@]}
+
+    local k_p=$((k-1))
+    local n_p=$((n-1))
+    local h=$(H "$f" "file")
+
+    for ((i = 1; i <= m; i++)); do
+        if ((n_p == 0)); then
+            return 1
+        fi
+        if (( ((k_p & 1) == 1) || (k_p == n_p) )); then
+            h=$(H "${pi_p[$((i - 1))]}""$h" "hash")
+            while (( (k_p & 1) == 0 )); do
+                k_p=$((k_p >> 1))
+                n_p=$((n_p >> 1))
+            done
+        else
+            h=$(H "$h""${pi_p[$((i - 1))]}" "hash")
+        fi
+        k_p=$((k_p >> 1))
+        n_p=$((n_p >> 1))
+    done
+    if [[ ($n_p -eq 0) && ("$h" == "$root_hash") ]]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
-# TO BE FIXED
 if [[ ("$subcmd" == "build") && ("$out_flag$tree_flag$proof_flag$hash_flag$arg_flag" == "10001") && (((! -e "$output_file") || (-f "$output_file")) && (-d "$argument")) && (! -h "$output_file") && (! -h "$argument") ]]; then
     build $argument > $output_file
 elif [[ ("$subcmd" == "gen-proof") && ("$out_flag$tree_flag$proof_flag$hash_flag$arg_flag" == "11001") && (((! -e "$output_file") || (-f "$output_file")) && (-f "$tree_file")) && (! -h "$output_file") && (! -h "$tree_file") ]]; then
-    gen-proof $argument $tree_file  $output_file
+    gen-proof $argument $tree_file > $output_file
+    if (( $? == 1 )); then
+        echo 'ERROR: file not found in tree'
+        exit 1
+    fi
 elif [[ ("$subcmd" == "verify-proof") && ("$out_flag$tree_flag$proof_flag$hash_flag$arg_flag" == "00111") && ((-f "$proof_file") && (( ! "$hash" =~ [^0-9A-F]+) || (! "$hash" =~ [^0-9a-f]+)) && (-f "$argument")) && (! -h "$proof_file") && (! -h "$argument")]]; then
-    verify-proof 
+    # Convert upper to lower
+    hash=$(echo "$hash" | awk '{print tolower($0)}')
+    verify-proof $argument $proof_file $hash
+    if (( $? == 0 )); then
+        echo 'OK'
+        exit 0
+    else
+        echo 'Verification Failed'
+        exit 1
+    fi
 else
     usage
     exit 1
 fi
-
-
