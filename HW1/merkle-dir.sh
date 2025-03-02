@@ -40,7 +40,7 @@ if [[ ("$subcmd" != "build") && ("$subcmd" != "gen-proof") && ("$subcmd" != "ver
 fi
 
 for arg in "$@"; do
-    if [[ "$arg" == *=* ]]; then
+    if [[ "$arg" =~ ^--(output|tree|proof|root)= ]]; then
         usage
         exit 1
     fi
