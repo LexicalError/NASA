@@ -129,15 +129,20 @@ M(){
         # 2^a = e^(ln2)a
         local M_k=$(echo $M_m | awk 'function floor(x){return int(x) - (x < int(x))} {print exp(log(2) * floor(log($1 - 1) / log(2)))}')
         # Concatenate in hex to prevent losing null bytes
-        hash1=$(M "$M_i" "$((M_k + M_i - 1))" "$M_dir")
-        hash2=$(M "$((M_k + M_i))" "$((M_m + M_i - 1))" "$M_dir")
-        H "$hash1""$hash2" "hash" 
+        if [[ ! -v hashes["$M_i $((M_k + M_i - 1))"] ]]; then
+            hashes["$M_i $((M_k + M_i - 1))"]=$(M "$M_i" "$((M_k + M_i - 1))" "$M_dir")
+        fi
+        if [[ ! -v hashes["$((M_k + M_i)) $((M_m + M_i - 1))"] ]]; then
+            hashes["$((M_k + M_i)) $((M_m + M_i - 1))"]=$(M "$((M_k + M_i))" "$((M_m + M_i - 1))" "$M_dir")
+        fi
+        H "${hashes["$M_i $((M_k + M_i - 1))"]}""${hashes["$((M_k + M_i)) $((M_m + M_i - 1))"]}" "hash" 
     fi
 }
 
 build(){
     local target_dir=$1
     declare -g p=($(dir_walk "$target_dir"))
+    declare -g -A hashes
     local n=0
     for file in "${p[@]}"; do
         echo $file

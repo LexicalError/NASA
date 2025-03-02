@@ -17,4 +17,5 @@
 [https://stackoverflow.com/questions/74372922/how-to-loop-through-array-in-awk](https://stackoverflow.com/questions/74372922/how-to-loop-through-array-in-awk)
 [https://stackoverflow.com/questions/12524308/bash-strip-trailing-linebreak-from-output](https://stackoverflow.com/questions/12524308/bash-strip-trailing-linebreak-from-output)
 [https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash](https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash)
+[https://stackoverflow.com/questions/30353951/how-to-check-if-dictionary-contains-a-key-in-bash](https://stackoverflow.com/questions/30353951/how-to-check-if-dictionary-contains-a-key-in-bash)
 
