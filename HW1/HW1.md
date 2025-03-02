@@ -1,8 +1,9 @@
 # NASA Homework 1
 
-林靖昀
+B12902116 林靖昀
 
-**References:**
+## References  
+
 [https://labex.io/tutorials/shell-bash-getopt-391993](https://labex.io/tutorials/shell-bash-getopt-391993)
 [https://stackoverflow.com/questions/20796200/how-to-loop-over-files-in-directory-and-change-path-and-add-suffix-to-filename](https://stackoverflow.com/questions/20796200/how-to-loop-over-files-in-directory-and-change-path-and-add-suffix-to-filename)
 [https://www.gnu.org/software/gawk/manual/html_node/Numeric-Functions.html](https://www.gnu.org/software/gawk/manual/html_node/Numeric-Functions.html)

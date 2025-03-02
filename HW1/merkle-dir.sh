@@ -166,6 +166,12 @@ build(){
     done
 }
 
+get_coords(){
+    local h=$(echo $(($2 - $1 + 1)) | awk 'function ceil(x){return int(x) + (x > int(x))} {print ceil(log($1) / log(2))}')
+    local x=$(( ($1 - 1) / 2**h ))
+    echo "$h $x"
+}
+
 gen-proof(){
     local leaf_file=$1
     local tree_file=$2
@@ -190,50 +196,29 @@ gen-proof(){
         return 1
     fi
 
-    # Read hashes
-    local parsed_hashes=($(awk 'NF==0 {flag=1; next} flag{n=split($0,arr,":"); for (i=1; i<=n; i++) print(arr[i])}' $tree_file))
-    local tmp_index=0
-    local K=$(echo "$n" | awk 'function ceil(x){return int(x) + (x > int(x))} {print ceil(log($1) / log(2))}')
-    for((k = 0; k <= K; k++)); do
-        local N=$(echo "$n $k" | awk 'function floor(x){return int(x) - (x < int(x))} {print floor($1 / exp(log(2) * $2))}')
-        for ((i = 1; i <= $N; i++)); do
-            local start=$(echo "$i $k" | awk '{print ($1 - 1) * exp(log(2) * $2) + 1}')
-            local end=$(echo "$i $k" | awk '{print $1 * exp(log(2) * $2)}')
-            # M $start $end 
-            hashes["$start $end"]="${parsed_hashes[$tmp_index]}"
-            tmp_index=$((tmp_index+1))
-        done
-        if (( k == 0 )); then
-            continue
-        elif (( (n % (2**k)) <= (2**(k-1)) )); then
-            continue
-        else
-            local start=$(echo "$N $k" | awk '{print $1 * exp(log(2) * $2) + 1}')
-            local end=$n
-            # M $start $end 
-            hashes["$start $end"]="${parsed_hashes[$tmp_index]}"
-            tmp_index=$((tmp_index+1))
-        fi
-    done
-
     echo "leaf_index:$leaf_index,tree_size:$n"
     local proof=() 
     local j="$leaf_index"
     local s="1"
     local m="$n"
     local k=0
+    local x=0
+    local h=0
+
     while true; do
         k=$(echo $m | awk 'function floor(x){return int(x) - (x < int(x))} {print exp(log(2) * floor(log($1 - 1) / log(2)))}')
         if ((m == 1)); then
             break;
         elif ((j <= k)); then
             # pi j s k -||- hashes s+k s+m-1
-            proof+=(${hashes["$((s + k)) $((s + m - 1))"]})
+            read h x <<< "$(get_coords $((s + k)) $((s + m - 1)))"
+            proof+=($(head -n "$((n + $h + 2))" "$tree_file" | tail -n 1 | awk -F '[:]' -v x="$(($x + 1))"  '{ print $x }' ))
             m="$k"
         else
             # M s s+k-1
             # pi j-k s+k m-k -||- hashes[s s+k-1]} "
-            proof+=(${hashes["$s $((s + k - 1))"]})
+            read h x <<< "$(get_coords $s $((s + k - 1)))"
+            proof+=($(head -n "$((n + $h  + 2))" "$tree_file" | tail -n 1 | awk -F '[:]' -v x="$(($x  + 1))" '{ print $x }' ))
             j=$((j - k))
             s=$((s + k))
             m=$((m - k))
