@@ -240,9 +240,31 @@ gen-proof(){
     done
 
     echo "leaf_index:$leaf_index,tree_size:$n"
-    proof=($(pi "$leaf_index" "1" "$n")) 
-    for l in ${proof[@]}; do
-        echo "$l"
+    # local proof=($(pi "$leaf_index" "1" "$n")) 
+    local proof=() 
+    local j="$leaf_index"
+    local s="1"
+    local m="$n"
+    local k=0
+    while true; do
+        k=$(echo $m | awk 'function floor(x){return int(x) - (x < int(x))} {print exp(log(2) * floor(log($1 - 1) / log(2)))}')
+        if ((m == 1)); then
+            break;
+        elif ((j <= k)); then
+            # pi j s k -||- hashes s+k s+m-1
+            proof+=(${hashes["$((s + k)) $((s + m - 1))"]})
+            m="$k"
+        else
+            # M s s+k-1
+            # pi j-k s+k m-k -||- hashes[s s+k-1]} "
+            proof+=(${hashes["$s $((s + k - 1))"]})
+            j=$((j - k))
+            s=$((s + k))
+            m=$((m - k))
+        fi
+    done 
+    for ((index=${#proof[@]} - 1; index >= 0; index--)); do
+        echo "${proof[$index]}"
     done
 }
 
