@@ -96,18 +96,6 @@ while (($# > 0)); do
     esac
 done
 
-dir_walk(){
-    cd "$target_dir"
-    local list=($(find . -type f | LC_COLLATE=C sort))
-    for dir_i in ${list[@]}; do
-        if [[ (-h "$dir_i") || ("$dir_i" == "$1") || (-d "$dir_i") ]]; then
-            continue
-        elif [[ -f "$dir_i" ]]; then
-            echo ${dir_i:2}
-        fi
-    done
-}
-
 H(){
     if [[ "$2" == "file" ]]; then 
         # sha256sum $1 | awk '{print $1}' | xxd -r -p 
@@ -141,7 +129,7 @@ M(){
 
 build(){
     local target_dir=$1
-    declare -g p=($(dir_walk "$target_dir"))
+    declare -g p=($(cd "$target_dir"; find . -type f | LC_COLLATE=C sort | sed 's/^..//g'))
     declare -g -A hashes
     local n=0
     for file in "${p[@]}"; do
@@ -176,22 +164,6 @@ build(){
             echo ''
         fi
     done
-}
-
-pi(){
-    local j=$1
-    local s=$2
-    local m=$3
-    local k=$(echo $m | awk 'function floor(x){return int(x) - (x < int(x))} {print exp(log(2) * floor(log($1 - 1) / log(2)))}')
-    if ((m == 1)); then
-        echo -n ' '
-    elif ((j <= k)); then
-        #  M s+k s+m-1
-        echo -n "$(pi "$j" "$s" "$k") ${hashes["$((s + k))" "$((s + m - 1))"]} "
-    else
-        # M s s+k-1
-        echo -n "$(pi $((j - k)) $((s + k)) $((m - k))) ${hashes["$s $((s + k - 1))"]} "
-    fi
 }
 
 gen-proof(){
@@ -245,7 +217,6 @@ gen-proof(){
     done
 
     echo "leaf_index:$leaf_index,tree_size:$n"
-    # local proof=($(pi "$leaf_index" "1" "$n")) 
     local proof=() 
     local j="$leaf_index"
     local s="1"
