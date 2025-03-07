@@ -7,7 +7,7 @@ B12902116 林靖昀
 1. `pacman -S ntfs-3g` to install ntfs util for creating ntfs.  
 2. `mkfs.ntfs /dev/vdi2` to creat ntfs on `vdi2`.  \
 3. `lsblk -f` to find the UUID of the new file system.  
-3. Edit fstab and add an entry for `/dev/vdi2`.
+3. Edit fstab and add an entry for `/dev/vdi2`.  
 
 **Reference:**  
 [https://wiki.archlinux.org/title/File_systems](https://wiki.archlinux.org/title/File_systems)  
@@ -87,8 +87,50 @@ B12902116 林靖昀
 
 ## 8.等一下，妳還沒回答我  
 
-1. 
-2. 
-3. 
-4. 
+1. zfs does not support growing and shrinking while unmounted, whereas btrfs supports both while unmounted.  
+
+**Reference:**  
+[https://en.wikipedia.org/wiki/Comparison_of_file_systems#Features](https://en.wikipedia.org/wiki/Comparison_of_file_systems#Features)  
+
+2. FUSE as the name implies, is a filesystem  implemented in userspace, with a kernel module that only acts as a bridge between the userspace code and other kernel interfaces.  
+    Advantages:  
+    Faster development and distribution, as it not integrated to the kernel.  
+    Disadvantages:
+    Less robust, for example, since the filesystem is implemented as processes, there is a chance that it is accidentally killed.  
+
+**References:**  
+[https://en.wikipedia.org/wiki/Filesystem_in_Userspace](https://en.wikipedia.org/wiki/Filesystem_in_Userspace)  
+[https://www.linuxtoday.com/blog/user-space-file-systems/](https://www.linuxtoday.com/blog/user-space-file-systems/)  
+
+3. MBR: Master Boot Record, GPT: GUID Partition Table  
+    1. MBR has a maximum partition size of 2TB whereas GPT supports up to 64ZiB (depending on sector size).  
+    2. MBR only supports 4 partitions whereas GPT supports at least 128 partitions.  
+
+    **References:**  
+    [https://en.wikipedia.org/wiki/Master_boot_record](https://en.wikipedia.org/wiki/Master_boot_record)  
+    [https://en.wikipedia.org/wiki/GUID_Partition_Table](https://en.wikipedia.org/wiki/GUID_Partition_Table)
+
+4. SI & IEC definition:  
+    MB: $1000^2$ bytes, MiB: $1024^2$ bytes.  
+    For a 4096 byte file, with `ls -l`, we see that it is `4096` bytes, but with `ls -lh`, it is 4.0K, thus the K means KiB, and `ls -lh` uses binary prefixes by default.  
+
+
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/Megabyte](https://en.wikipedia.org/wiki/Megabyte)  
+
 5. 
+    1.  RAID 0:  
+        RAID 0 does stripping, which increases read/write throughput, but it does not provide mirroring or parity, thus losing 1 drive would typically mean all data are lost.  
+    2.  RAID 1:
+        RAID 1 does mirroring, which decreases write throughput, but since all data are mirrored, as long as one drive is functional, no data is lost. RAID 1 does not provide parities or striping.  
+    3.  RAID 5:  
+        RAID 5 does striping with distributed parities, parities are distributed among the drives, such that if one drive fails, data can still be rebuild, if more than one fails, data would be lost.  
+
+    4.  RAID 10:  
+        Also known as RAID 1+0, is a RAID 0 of RAID 1s, meaning it does stripping on mirrors.  
+
+    **Reference:**  
+    [https://en.wikipedia.org/wiki/RAID](https://en.wikipedia.org/wiki/RAID)
+    [https://en.wikipedia.org/wiki/Standard_RAID_levels](https://en.wikipedia.org/wiki/Standard_RAID_levels)
+    [https://en.wikipedia.org/wiki/Nested_RAID_levels#RAID_10](https://en.wikipedia.org/wiki/Nested_RAID_levels#RAID_10)
+
