@@ -1,23 +1,30 @@
 # NASA Homework 2
 
-B12902116 林靖昀
+B12902116 林靖昀  
+
+#### Classmates consulted
+
+* **B12902118 金哲安**
+* **B12902066 宋和峻**
 
 #### 1. 那傢伙竟然敢無視窗  
 
 1. `pacman -S ntfs-3g` to install ntfs util for creating ntfs.  
-2. `mkfs.ntfs /dev/vdi2` to creat ntfs on `vdi2`.  \
+2. `mkfs.ntfs /dev/vdi2` to creat ntfs on `vdi2`.  
 3. `lsblk -f` to find the UUID of the new file system.  
-3. Edit fstab and add an entry for `/dev/vdi2`.  
+3. Edit fstab and add an entry for `/dev/vdi2`. (Note: we should use the name `ntfs3` in fstab to successfully automount without needing the `ntfs-3g` package)  
+4. `reboot`.
 
 **Screenshots:**  
-![](img/P1-1.png)![](img/P1-2.png)
+![](img/P1-1.png)
+![](img/P1-2.png)
 ![](img/P1-3.png)
 
 **Reference:**  
 [https://wiki.archlinux.org/title/File_systems](https://wiki.archlinux.org/title/File_systems)  
 [https://wiki.archlinux.org/title/NTFS](https://wiki.archlinux.org/title/NTFS)  
 
-<br>
+<!-- <br> -->
 
 #### 2. 因為要換到新的 SWAP
 
